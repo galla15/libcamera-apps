@@ -1,0 +1,3248 @@
+diff --git a/.github/workflows/libcamera-apps-style-checker.yml b/.github/workflows/libcamera-apps-style-checker.yml
+index c530bb6..9d908ee 100644
+--- a/.github/workflows/libcamera-apps-style-checker.yml
++++ b/.github/workflows/libcamera-apps-style-checker.yml
+@@ -9,7 +9,7 @@ jobs:
+     runs-on: [ self-hosted ]
+ 
+     steps:
+-    - uses: actions/checkout@v3
++    - uses: actions/checkout@v2
+       with:
+         fetch-depth: 0
+         clean: true
+diff --git a/.github/workflows/libcamera-apps-test.yml b/.github/workflows/libcamera-apps-test.yml
+index db9fa58..8335bb3 100644
+--- a/.github/workflows/libcamera-apps-test.yml
++++ b/.github/workflows/libcamera-apps-test.yml
+@@ -22,7 +22,7 @@ jobs:
+         build_type: [ Release, Debug ]
+ 
+     steps:
+-    - uses: actions/checkout@v3
++    - uses: actions/checkout@v2
+       with:
+         fetch-depth: 1
+         clean: true
+@@ -41,7 +41,7 @@ jobs:
+       run: tar -cvf build-artifacts-${{matrix.compiler}}-${{matrix.build_type}}.tar -C ${{github.workspace}}/build .
+ 
+     - name: Upload build files
+-      uses: actions/upload-artifact@v3
++      uses: actions/upload-artifact@v2
+       with:
+         name: build-artifacts-${{matrix.compiler}}-${{matrix.build_type}}
+         path: build-artifacts-${{matrix.compiler}}-${{matrix.build_type}}.tar
+@@ -52,7 +52,7 @@ jobs:
+     runs-on: [ self-hosted ]
+ 
+     steps:
+-    - uses: actions/checkout@v3
++    - uses: actions/checkout@v2
+       with:
+         fetch-depth: 1
+         clean: true
+@@ -69,7 +69,7 @@ jobs:
+       run: tar -cvf build-artifacts-gcc-lite.tar -C ${{github.workspace}}/build .
+ 
+     - name: Upload build files
+-      uses: actions/upload-artifact@v3
++      uses: actions/upload-artifact@v2
+       with:
+         name: build-artifacts-gcc-lite
+         path: build-artifacts-gcc-lite.tar
+@@ -82,10 +82,10 @@ jobs:
+ 
+     strategy:
+       matrix:
+-        camera: [ imx219, imx477, imx708 ]
++        camera: [ imx219, imx477 ]
+ 
+     steps:
+-    - uses: actions/checkout@v3
++    - uses: actions/checkout@v2
+       with:
+         fetch-depth: 1
+         clean: true
+@@ -94,7 +94,7 @@ jobs:
+       run: mkdir -p ${{github.workspace}}/test_output
+ 
+     - name: Download build
+-      uses: actions/download-artifact@v3
++      uses: actions/download-artifact@v2
+       with:
+         name: build-artifacts-gcc-Release
+         path: ${{github.workspace}}
+@@ -114,7 +114,7 @@ jobs:
+ 
+     - name: Upload test output
+       if: ${{ failure() }}
+-      uses: actions/upload-artifact@v3
++      uses: actions/upload-artifact@v2
+       with:
+         name: test-artifacts-${{matrix.camera}}
+         path: ${{github.workspace}}/test_output/
+diff --git a/.github/workflows/libcamera-test.yml b/.github/workflows/libcamera-test.yml
+index b1ee88a..9b6934a 100644
+--- a/.github/workflows/libcamera-test.yml
++++ b/.github/workflows/libcamera-test.yml
+@@ -42,7 +42,7 @@ jobs:
+       run: tar -cvf build-artifacts-libcamera.tar -C ${{env.LIBCAMERA_SRC_DIR}} .
+ 
+     - name: Upload build files
+-      uses: actions/upload-artifact@v3
++      uses: actions/upload-artifact@v2
+       with:
+         name: build-artifacts-libcamera
+         path: build-artifacts-libcamera.tar
+@@ -54,7 +54,7 @@ jobs:
+     needs: build-libcamera
+ 
+     steps:
+-    - uses: actions/checkout@v3
++    - uses: actions/checkout@v2
+       with:
+         fetch-depth: 1
+         clean: true
+@@ -63,7 +63,7 @@ jobs:
+       run: rm -rf ${{env.LIBCAMERA_SRC_DIR}} && mkdir -p ${{env.LIBCAMERA_SRC_DIR}}
+ 
+     - name: Download libcamera artifact
+-      uses: actions/download-artifact@v3
++      uses: actions/download-artifact@v2
+       with:
+         name: build-artifacts-libcamera
+         path: ${{github.workspace}}
+@@ -83,7 +83,7 @@ jobs:
+       run: tar -cvf build-artifacts-libcamera-apps.tar -C ${{github.workspace}}/build .
+ 
+     - name: Upload build files
+-      uses: actions/upload-artifact@v3
++      uses: actions/upload-artifact@v2
+       with:
+         name: build-artifacts-libcamera-apps
+         path: build-artifacts-libcamera-apps.tar
+@@ -96,10 +96,10 @@ jobs:
+ 
+     strategy:
+       matrix:
+-        camera: [ imx219, imx477, imx708 ]
++        camera: [ imx219, imx477 ]
+ 
+     steps:
+-    - uses: actions/checkout@v3
++    - uses: actions/checkout@v2
+       with:
+         fetch-depth: 1
+         clean: true
+@@ -108,7 +108,7 @@ jobs:
+       run: mkdir -p ${{github.workspace}}/test_output
+ 
+     - name: Download libcamera-apps build
+-      uses: actions/download-artifact@v3
++      uses: actions/download-artifact@v2
+       with:
+         name: build-artifacts-libcamera-apps
+         path: ${{github.workspace}}
+@@ -120,7 +120,7 @@ jobs:
+       run: rm -rf ${{env.LIBCAMERA_SRC_DIR}} && mkdir -p ${{env.LIBCAMERA_SRC_DIR}}
+ 
+     - name: Download libcamera artifact
+-      uses: actions/download-artifact@v3
++      uses: actions/download-artifact@v2
+       with:
+         name: build-artifacts-libcamera
+         path: ${{github.workspace}}
+@@ -140,7 +140,7 @@ jobs:
+ 
+     - name: Upload test output
+       if: ${{failure()}}
+-      uses: actions/upload-artifact@v3
++      uses: actions/upload-artifact@v2
+       with:
+         name: test-artifacts-${{matrix.camera}}
+         path: ${{github.workspace}}/test_output/
+@@ -153,7 +153,7 @@ jobs:
+ 
+     strategy:
+       matrix:
+-        camera: [ imx219, imx477, imx708 ]
++        camera: [ imx219, imx477 ]
+ 
+     steps:
+     - name: Clean libcamera LKG
+@@ -163,7 +163,7 @@ jobs:
+       run: rm -rf ${{env.LIBCAMERA_SRC_DIR}} && mkdir -p ${{env.LIBCAMERA_SRC_DIR}}
+ 
+     - name: Download libcamera artifact
+-      uses: actions/download-artifact@v3
++      uses: actions/download-artifact@v2
+       with:
+         name: build-artifacts-libcamera
+         path: ${{github.workspace}}
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 03f1d0b..748c6dd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,6 +1,6 @@
+ cmake_minimum_required(VERSION 3.6)
+ 
+-project(libcamera-apps VERSION 1.1.0)
++project(libcamera-apps)
+ 
+ if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
+     if (NOT CMAKE_BUILD_TYPE)
+diff --git a/README.md b/README.md
+index 75f77cb..ac97d75 100644
+--- a/README.md
++++ b/README.md
+@@ -4,7 +4,7 @@ This is a small suite of libcamera-based apps that aim to copy the functionality
+ 
+ Build
+ -----
+-For usage and build instructions, see the official Raspberry Pi documenation pages [here.](https://www.raspberrypi.com/documentation/computers/camera_software.html#building-libcamera-and-libcamera-apps)
++For usage and build instructions, see the official Raspberry Pi documenation pages [here.](https://www.raspberrypi.com/documentation/accessories/camera.html#libcamera-and-libcamera-apps)
+ 
+ License
+ -------
+diff --git a/SignalServer/Semaphore.hpp b/SignalServer/Semaphore.hpp
+new file mode 100644
+index 0000000..8d783a4
+--- /dev/null
++++ b/SignalServer/Semaphore.hpp
+@@ -0,0 +1,56 @@
++#pragma once
++
++#include <condition_variable>
++#include <iostream>
++#include <mutex>
++
++using std::cout;
++using std::endl;
++
++class Semaphore {
++public:
++    explicit Semaphore(int count_ = 0, int max_count = 5)
++        : count(count_), max_count(max_count) {
++    }
++
++    inline void notify(int tid) {
++        std::unique_lock<std::mutex> lock(mtx);
++        if (count < max_count) {
++            count++;
++            //notify the waiting thread
++            cv.notify_one();
++        }
++    }
++
++    inline void wait(int tid) {
++        std::unique_lock<std::mutex> lock(mtx);
++        while (count == 0) {
++            //wait on the mutex until notify is called
++            cv.wait(lock);
++        }
++        count--;
++    }
++
++    inline bool wait_for(int tid, int64_t timeout = 1500) {
++        std::unique_lock<std::mutex> lock(mtx);
++        while (count == 0) {
++            //wait on the mutex until notify is called
++            std::cv_status status = cv.wait_for(lock, std::chrono::milliseconds(timeout));
++            if (status == std::cv_status::timeout)
++                return true;
++        }
++        count--;
++        return false;
++    }
++
++    inline void cleanup() {
++        std::unique_lock<std::mutex> lock(mtx);
++        count = 0;
++    }
++
++private:
++    std::mutex mtx;
++    std::condition_variable cv;
++    int count;
++    const int max_count;
++};
+diff --git a/SignalServer/SignalServer.cpp b/SignalServer/SignalServer.cpp
+new file mode 100644
+index 0000000..e8a9910
+--- /dev/null
++++ b/SignalServer/SignalServer.cpp
+@@ -0,0 +1,94 @@
++#include "SignalServer.hpp"
++#include <iostream>
++
++SignalServer::~SignalServer() {
++    stop();
++}
++
++void SignalServer::start() {
++    if (this->_running)
++        return;
++
++    if ((sock_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
++        perror("socket creation failed");
++        exit(EXIT_FAILURE);
++    }
++    int b_optval = 1;
++    if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *) &b_optval, sizeof(b_optval))) {
++        perror("setsockopt failed");
++		exit(EXIT_FAILURE);
++    }
++
++    memset(&serv_addr, 0, sizeof(struct sockaddr_in));
++    serv_addr.sin_family = AF_INET;
++    serv_addr.sin_port = htons(port);
++
++    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
++    len = sizeof(serv_addr);
++
++    // Bind the socket with the server address
++    if (bind(sock_fd, (const struct sockaddr *) &serv_addr,
++             sizeof(serv_addr)) < 0) {
++        perror("bind failed");
++        exit(EXIT_FAILURE);
++    }
++    this->_running = true;
++    this->recv_thread = std::thread(&SignalServer::capture, this);
++}
++
++void SignalServer::start(int port_num) {
++    setPort(port_num);
++    start();
++}
++
++void SignalServer::stop() {
++    this->_running = false;
++    shutdown(sock_fd, SHUT_RDWR);
++    if (this->recv_thread.joinable())
++        this->recv_thread.join();
++    close(sock_fd);
++    capture_sem.cleanup();
++}
++
++void SignalServer::capture() {
++    while (_running) {
++        recv_num = recvfrom(sock_fd,
++                            recv_buf,
++                            sizeof(recv_buf),
++                            0,
++                            (struct sockaddr *) &client_addr,
++                            (socklen_t *) &len);
++
++        if (recv_num < 0) {
++            perror("error reception :");
++            exit(EXIT_FAILURE);
++        }
++        recv_buf[recv_num] = '\0';
++        queue.push(recv_buf);
++        capture_sem.notify(0);
++    }
++    _running = false;
++}
++
++std::string  SignalServer::read() {
++    if (queue.empty()) {
++        return "";
++    }
++
++    auto arg = queue.front();
++    queue.pop();
++    return arg;
++}
++
++std::string  SignalServer::read(int64_t timeout) {
++    capture_sem.wait_for(0, timeout);
++    return read();
++}
++
++int SignalServer::getPort() const {
++    return port;
++}
++
++void SignalServer::setPort(int port_num) {
++    port = port_num;
++}
+diff --git a/SignalServer/SignalServer.hpp b/SignalServer/SignalServer.hpp
+new file mode 100644
+index 0000000..6a6fa8c
+--- /dev/null
++++ b/SignalServer/SignalServer.hpp
+@@ -0,0 +1,43 @@
++#include "Semaphore.hpp"
++#include <cstdio>
++#include <cstdlib>
++#include <cstring>
++#include <netinet/in.h>
++#include <queue>
++#include <string>
++#include <sys/socket.h>
++#include <sys/types.h>
++#include <thread>
++#include <unistd.h>
++
++class SignalServer
++{
++public:
++	SignalServer() = default;
++	explicit SignalServer(int port) : port(port) {};
++	~SignalServer();
++
++	void start();
++	void start(int port_num);
++	void stop();
++	[[nodiscard]] int getPort() const;
++	std::string read();
++	std::string read(int64_t timeout);
++
++private:
++	void capture();
++	void setPort(int port_num);
++
++private:
++	int port {};
++	int len {};
++	int sock_fd {};
++	struct sockaddr_in serv_addr{}, client_addr {};
++	char recv_buf[1024] {};
++	int recv_num {};
++	Semaphore capture_sem;
++	std::thread recv_thread;
++	volatile bool _running = false;
++	std::queue<std::string> queue;
++
++};
+diff --git a/SignalServer/keyboard_ctrl_test.py b/SignalServer/keyboard_ctrl_test.py
+new file mode 100644
+index 0000000..77a3f50
+--- /dev/null
++++ b/SignalServer/keyboard_ctrl_test.py
+@@ -0,0 +1,165 @@
++#!/usr/bin/env python3
++# -*- coding: UTF-8 -*-
++# 文件名：client.py
++
++import curses
++from curses import wrapper
++from socket import *
++
++
++# Rendering status bar
++def RenderStatusBar(stdscr):
++    height, width = stdscr.getmaxyx()
++    statusbarstr = "Press 'q' to exit"
++    stdscr.attron(curses.color_pair(3))
++    stdscr.addstr(height - 1, 0, statusbarstr)
++    stdscr.addstr(height - 1, len(statusbarstr), " " * (width - len(statusbarstr) - 1))
++    stdscr.attroff(curses.color_pair(3))
++
++
++# Rendering description
++def RenderDescription(stdscr):
++    focus_desc    = "Focus        : 'f' Key"
++    scale_desc    = "Digital Zoom : 'w'/'s' Key"
++    max_desc      = "Max Zoom     : 'm' Key"
++    reset_desc    = "Reset Zoom   : 'r' Key"
++    move_lr_desc  = "Move L/R     : Left / Right Key"
++    move_ud_desc  = "Move Up/Down : Up / Down Key"
++
++    desc_y = 1
++
++    stdscr.addstr(desc_y + 1, 0, focus_desc, curses.color_pair(1))
++    stdscr.addstr(desc_y + 2, 0, scale_desc, curses.color_pair(1))
++    stdscr.addstr(desc_y + 3, 0, max_desc, curses.color_pair(1))
++    stdscr.addstr(desc_y + 4, 0, reset_desc, curses.color_pair(1))
++    stdscr.addstr(desc_y + 5, 0, move_lr_desc, curses.color_pair(1))
++    stdscr.addstr(desc_y + 6, 0, move_ud_desc, curses.color_pair(1))
++
++
++# Rendering  middle text
++def RenderMiddleText(stdscr, k, focuser):
++    # get height and width of the window.
++    height, width = stdscr.getmaxyx()
++    # Declaration of strings
++    title = "Arducam Controller"[: width - 1]
++    subtitle = ""[: width - 1]
++    keystr = "Last key pressed: {}".format(k)[: width - 1]
++
++    # # Obtain device infomation
++    # focus_value = "Focus    : {}".format(focuser.get(Focuser.OPT_FOCUS))[:width-1]
++
++    if k == 0:
++        keystr = "No key press detected..."[: width - 1]
++
++    # Centering calculations
++    start_x_title = int((width // 2) - (len(title) // 2) - len(title) % 2)
++    start_x_subtitle = int((width // 2) - (len(subtitle) // 2) - len(subtitle) % 2)
++    start_x_keystr = int((width // 2) - (len(keystr) // 2) - len(keystr) % 2)
++    start_x_device_info = int(
++        (width // 2) - (len("Focus    : 00000") // 2) - len("Focus    : 00000") % 2
++    )
++    start_y = int((height // 2) - 6)
++
++    # Turning on attributes for title
++    stdscr.attron(curses.color_pair(2))
++    stdscr.attron(curses.A_BOLD)
++
++    # Rendering title
++    stdscr.addstr(start_y, start_x_title, title)
++
++    # Turning off attributes for title
++    stdscr.attroff(curses.color_pair(2))
++    stdscr.attroff(curses.A_BOLD)
++
++    # Print rest of text
++    stdscr.addstr(start_y + 1, start_x_subtitle, subtitle)
++    stdscr.addstr(start_y + 3, (width // 2) - 2, "-" * 4)
++    stdscr.addstr(start_y + 5, start_x_keystr, keystr)
++    # Print device info
++    # stdscr.addstr(start_y + 6, start_x_device_info, focus_value)
++
++
++def main(stdscr):
++    # Clear and refresh the screen for a blank canvas
++    stdscr.clear()
++    stdscr.refresh()
++    # Create a socket object
++    s = socket(family=AF_INET, type=SOCK_DGRAM, proto=0)
++    # Get localhost name
++    # host = gethostname()
++    host = "192.168.0.30"
++    # Set port number
++    port = 8080
++
++    # Start colors in curses
++    curses.start_color()
++    curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
++    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
++    curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
++    k = 0
++    words = []
++    send_words = ""
++    # Loop where k is the last character pressed
++    while True:
++        # Initialization
++        stdscr.clear()
++        # Flush all input buffers.
++        curses.flushinp()
++        # get height and width of the window.
++        height, width = stdscr.getmaxyx()
++        # Rendering some text
++        whstr = "Width: {}, Height: {}".format(width, height)
++        stdscr.addstr(0, 0, whstr, curses.color_pair(1))
++        # if len(words) == height:
++        #     words.pop(0)
++        # stdscr.addstr(1, 0, "\n".join(words), curses.color_pair(3))
++
++        # stdscr.addstr(1, int(width / 2), f"{send_words = }", curses.color_pair(3))
++        if k == ord("q"):
++            break
++        elif k in [ord("x"), ord("X")]:
++            s.sendto(b"X", (host, port))
++        elif k in [ord("f"), ord("F")]:
++            s.sendto(b"F", (host, port))
++
++        elif k in [ord("w"), ord("W")]:
++            s.sendto(b"W", (host, port))
++        elif k in [ord("s"), ord("S")]:
++            s.sendto(b"S", (host, port))
++
++        elif k in [curses.KEY_RIGHT, ord("l"), ord("L")]:
++            s.sendto(b"L", (host, port))
++        elif k in [curses.KEY_LEFT, ord("j"), ord("J")]:
++            s.sendto(b"J", (host, port))
++        elif k in [curses.KEY_UP, ord("i"), ord("I")]:
++            s.sendto(b"I", (host, port))
++        elif k in [curses.KEY_DOWN, ord("k"), ord("K")]:
++            s.sendto(b"K", (host, port))
++
++        elif k in [ord("m"), ord("M")]:
++            s.sendto(b"M", (host, port))
++        elif k in [ord("r"), ord("r")]:
++            s.sendto(b"R", (host, port))
++
++        else:
++            pass
++            # send_words = send_words + chr(k)
++
++        # render key description
++        RenderDescription(stdscr)
++        # render status bar
++        RenderStatusBar(stdscr)
++        # render middle text
++        focuser = None
++        RenderMiddleText(stdscr, k, focuser)
++
++        # Refresh the screen
++        stdscr.refresh()
++        # Wait for next input
++        k = stdscr.getch()
++        # k = stdscr.getkey()
++
++    s.close()
++
++
++wrapper(main)
+diff --git a/apps/CMakeLists.txt b/apps/CMakeLists.txt
+index bc331b8..c08ee89 100644
+--- a/apps/CMakeLists.txt
++++ b/apps/CMakeLists.txt
+@@ -1,11 +1,13 @@
+ cmake_minimum_required(VERSION 3.6)
+ 
++set(CMAKE_CXX_STANDARD 17)
++
+ project(libcamera-still)
+-add_executable(libcamera-still libcamera_still.cpp)
+-target_link_libraries(libcamera-still libcamera_app outputs images)
++add_executable(libcamera-still libcamera_still.cpp ../SignalServer/Semaphore.hpp ../SignalServer/SignalServer.cpp)
++target_link_libraries(libcamera-still libcamera_app images outputs)
+ 
+ project(libcamera-vid)
+-add_executable(libcamera-vid libcamera_vid.cpp)
++add_executable(libcamera-vid libcamera_vid.cpp ../SignalServer/Semaphore.hpp ../SignalServer/SignalServer.cpp)
+ target_link_libraries(libcamera-vid libcamera_app encoders outputs)
+ 
+ project(libcamera-hello)
+diff --git a/apps/libcamera_detect.cpp b/apps/libcamera_detect.cpp
+index f33652a..36cd591 100644
+--- a/apps/libcamera_detect.cpp
++++ b/apps/libcamera_detect.cpp
+@@ -24,20 +24,17 @@ struct DetectOptions : public StillOptions
+ 		options_.add_options()
+ 			("object", value<std::string>(&object), "Name of object to detect")
+ 			("gap", value<unsigned int>(&gap)->default_value(30), "Smallest gap between captures in frames")
+-			("timeformat", value<std::string>(&timeformat)->default_value("%m%d%H%M%S"), "Date/Time format string - see C++ strftime()")
+ 			;
+ 	}
+ 
+ 	std::string object;
+ 	unsigned int gap;
+-	std::string timeformat;
+ 
+ 	virtual void Print() const override
+ 	{
+ 		StillOptions::Print();
+ 		std::cerr << "    object: " << object << std::endl;
+ 		std::cerr << "    gap: " << gap << std::endl;
+-		std::cerr << "    timeformat: " << timeformat << std::endl;
+ 	}
+ };
+ 
+@@ -109,25 +106,13 @@ static void event_loop(LibcameraDetectApp &app)
+ 			libcamera::Stream *stream = app.StillStream(&info);
+ 			const std::vector<libcamera::Span<uint8_t>> mem = app.Mmap(completed_request->buffers[stream]);
+ 
+-			// Generate a filename for the output and save it.
++			// Make a filename for the output and save it.
+ 			char filename[128];
+-			if (options->datetime)
+-			{
+-				std::time_t raw_time;
+-				std::time(&raw_time);
+-				char time_string[32];
+-				std::tm *time_info = std::localtime(&raw_time);
+-				std::strftime(time_string, sizeof(time_string), options->timeformat.c_str() , time_info);
+-				snprintf(filename, sizeof(filename), "%s%s.%s", options->output.c_str(), time_string, options->encoding.c_str());
+-			}
+-			else if (options->timestamp)
+-				snprintf(filename, sizeof(filename), "%s%u.%s", options->output.c_str(), (unsigned)time(NULL), options->encoding.c_str());
+-			else
+-				snprintf(filename, sizeof(filename), options->output.c_str(), options->framestart);
++			snprintf(filename, sizeof(filename), options->output.c_str(), options->framestart);
+ 			filename[sizeof(filename) - 1] = 0;
+ 			options->framestart++;
+ 			LOG(1, "Save image " << filename);
+-			jpeg_save(mem, info, completed_request->metadata, std::string(filename), app.CameraModel(), options);
++			jpeg_save(mem, info, completed_request->metadata, std::string(filename), app.CameraId(), options);
+ 
+ 			// Restart camera in preview mode.
+ 			app.Teardown();
+diff --git a/apps/libcamera_jpeg.cpp b/apps/libcamera_jpeg.cpp
+index 05a632b..679806f 100644
+--- a/apps/libcamera_jpeg.cpp
++++ b/apps/libcamera_jpeg.cpp
+@@ -82,7 +82,7 @@ static void event_loop(LibcameraJpegApp &app)
+ 			StreamInfo info = app.GetStreamInfo(stream);
+ 			CompletedRequestPtr &payload = std::get<CompletedRequestPtr>(msg.payload);
+ 			const std::vector<libcamera::Span<uint8_t>> mem = app.Mmap(payload->buffers[stream]);
+-			jpeg_save(mem, info, payload->metadata, options->output, app.CameraModel(), options);
++			jpeg_save(mem, info, payload->metadata, options->output, app.CameraId(), options);
+ 			return;
+ 		}
+ 	}
+diff --git a/apps/libcamera_still.cpp b/apps/libcamera_still.cpp
+index 856f1be..a3630a2 100644
+--- a/apps/libcamera_still.cpp
++++ b/apps/libcamera_still.cpp
+@@ -12,13 +12,13 @@
+ 
+ #include <chrono>
+ 
+-#include "core/frame_info.hpp"
+ #include "core/libcamera_app.hpp"
+ #include "core/still_options.hpp"
+ 
+ #include "output/output.hpp"
+ 
+ #include "image/image.hpp"
++#include "../SignalServer/SignalServer.hpp"
+ 
+ using namespace std::chrono_literals;
+ using namespace std::placeholders;
+@@ -81,9 +81,9 @@ static void save_image(LibcameraStillApp &app, CompletedRequestPtr &payload, Str
+ 	StreamInfo info = app.GetStreamInfo(stream);
+ 	const std::vector<libcamera::Span<uint8_t>> mem = app.Mmap(payload->buffers[stream]);
+ 	if (stream == app.RawStream())
+-		dng_save(mem, info, payload->metadata, filename, app.CameraModel(), options);
++		dng_save(mem, info, payload->metadata, filename, app.CameraId(), options);
+ 	else if (options->encoding == "jpg")
+-		jpeg_save(mem, info, payload->metadata, filename, app.CameraModel(), options);
++		jpeg_save(mem, info, payload->metadata, filename, app.CameraId(), options);
+ 	else if (options->encoding == "png")
+ 		png_save(mem, info, filename, options);
+ 	else if (options->encoding == "bmp")
+@@ -161,10 +161,17 @@ static int get_key_or_signal(StillOptions const *options, pollfd p[1])
+ 
+ static void event_loop(LibcameraStillApp &app)
+ {
++	SignalServer signal_server(8080);
++	std::string param;
++	signal_server.start();
++
+ 	StillOptions const *options = app.GetOptions();
+ 	bool output = !options->output.empty() || options->datetime || options->timestamp; // output requested?
+ 	bool keypress = options->keypress || options->signal; // "signal" mode is much like "keypress" mode
+ 	unsigned int still_flags = LibcameraApp::FLAG_STILL_NONE;
++	float scale = 0.0;
++	float offset_x = 0.0;
++	float offset_y = 0.0;
+ 	if (options->encoding == "rgb" || options->encoding == "png")
+ 		still_flags |= LibcameraApp::FLAG_STILL_BGR;
+ 	else if (options->encoding == "bmp")
+@@ -199,17 +206,11 @@ static void event_loop(LibcameraStillApp &app)
+ 	auto timelapse_time = start_time;
+ 	int timelapse_frames = 0;
+ 	constexpr int TIMELAPSE_MIN_FRAMES = 6; // at least this many preview frames between captures
+-	bool keypressed = false;
+-	enum
+-	{
+-		AF_WAIT_NONE,
+-		AF_WAIT_SCANNING,
+-		AF_WAIT_FINISHED
+-	} af_wait_state = AF_WAIT_NONE;
+-	int af_wait_timeout = 0;
+ 
+-	for (unsigned int count = 0;; count++)
++	for (unsigned int count = 0; ; count++)
+ 	{
++		param = signal_server.read();
++
+ 		LibcameraApp::Msg msg = app.Wait();
+ 		if (msg.type == LibcameraApp::MsgType::Timeout)
+ 		{
+@@ -223,77 +224,198 @@ static void event_loop(LibcameraStillApp &app)
+ 		else if (msg.type != LibcameraApp::MsgType::RequestComplete)
+ 			throw std::runtime_error("unrecognised message!");
+ 
+-		CompletedRequestPtr &completed_request = std::get<CompletedRequestPtr>(msg.payload);
+ 		auto now = std::chrono::high_resolution_clock::now();
+ 		int key = get_key_or_signal(options, p);
+-		if (key == 'x' || key == 'X')
++		if (!key)
++			key = param[0];
++
++		switch (key)
++		{
++		case 'x':
++		case 'X':
+ 			return;
+-		if (key == '\n')
+-			keypressed = true;
++		case 'f':
++		case 'F':
++		{
++			libcamera::ControlList controls;
++			controls.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerStart);
++			app.SetControls(controls);
++			break;
++		}
++		case 'w':
++		case 'W':
++		{
++			scale += 0.05;
++			break;
++		}
++		case 's':
++		case 'S':
++		{
++			scale -= 0.05;
++			break;
++		}
++		case 'l':
++		case 'L':
++		{
++			offset_x += 0.05;
++			break;
++		}
++		case 'j':
++		case 'J':
++		{
++			offset_x -= 0.05;
++			break;
++		}
++		case 'i':
++		case 'I':
++		{
++			offset_y -= 0.05;
++			break;
++		}
++		case 'k':
++		case 'K':
++		{
++			offset_y += 0.05;
++			break;
++		}
++		case 'm':
++		case 'M':
++		{
++			scale = 0.95;
++			break;
++		}
++		case 'r':
++		case 'R':
++		{
++			scale = 0.0;
++			break;
++		}
++		default:
++			(void)0;
++		}
++
++		if (scale > 0.95)
++			scale = 0.95;
++		else if (scale < 0.0)
++			scale = 0.0;
++
++		if (offset_x > scale / 2)
++			offset_x = scale / 2;
++		else if (offset_x < -(scale / 2))
++			offset_x = -(scale / 2);
++
++		if (offset_y > scale / 2)
++			offset_y = scale / 2;
++		else if (offset_y < -(scale / 2))
++			offset_y = -(scale / 2);
++
++		if (isalpha(key))
++		{
++			std::cout << "scale: " << scale << ", offset_x: " << offset_x << std::endl;
++
++			app.SetScalerCrop(scale / 2 + offset_x, scale / 2 + offset_y, 1 - scale, 1 - scale);
++		}
++
++		if (key == 'w' || key == 'W') {
++			scale += 0.05;
++		}
++
++		if (key == 's' || key == 'S') {
++			scale -= 0.05;
++		}
++
++		if (key == 'l' || key == 'L') {
++			offset_x += 0.05;
++		}
++
++		if (key == 'j' || key == 'J') {
++			offset_x -= 0.05;
++		}
++
++
++		if (key == 'i' || key == 'I') {
++			offset_y -= 0.05;
++		}
++
++		if (key == 'k' || key == 'K') {
++			offset_y += 0.05;
++		}
++
++		if (key == 'm' || key == 'M') {
++			scale = 0.95;
++		}
++
++		if (key == 'r' || key == 'R') {
++			scale = 0.0;
++		}
++
++
++		if (scale > 0.95) {
++			scale = 0.95;
++		}
++
++		if (scale < 0.0) {
++			scale = 0.0;
++		}
++
++		if (offset_x > scale / 2)
++			offset_x = scale / 2;
++
++		if (offset_x < -(scale / 2))
++			offset_x = -(scale / 2);
++
++		if (offset_y > scale / 2)
++			offset_y = scale / 2;
++
++		if (offset_y < -(scale / 2))
++			offset_y = -(scale / 2);
+ 
+-		// In viewfinder mode, run until the timeout or keypress. When that happens,
+-		// if the "--autofocus-on-capture" option was set, trigger an AF scan and wait
+-		// for it to complete. Then switch to capture mode if an output was requested.
++		if (isalpha(key)) {
++			std::cout << "scale: " << scale << ", offset_x: " << offset_x << std::endl;
++
++			app.SetScalerCrop(scale / 2 + offset_x, scale / 2 + offset_y, 1 - scale, 1 - scale);
++		}
++
++		if (key == 'f' || key == 'F') {
++			libcamera::ControlList controls;
++			controls.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerStart);
++			app.SetControls(controls);
++		}
++
++		// In viewfinder mode, simply run until the timeout. When that happens, switch to
++		// capture mode if an output was requested.
+ 		if (app.ViewfinderStream())
+ 		{
+ 			LOG(2, "Viewfinder frame " << count);
+ 			timelapse_frames++;
+ 
+ 			bool timed_out = options->timeout && now - start_time > std::chrono::milliseconds(options->timeout);
++			bool keypressed = key == '\n';
+ 			bool timelapse_timed_out = options->timelapse &&
+ 									   now - timelapse_time > std::chrono::milliseconds(options->timelapse) &&
+ 									   timelapse_frames >= TIMELAPSE_MIN_FRAMES;
+-			bool want_capture = false;
+ 
+-			if (af_wait_state != AF_WAIT_NONE)
++			if (timed_out || keypressed || timelapse_timed_out)
+ 			{
+-				FrameInfo fi(completed_request->metadata);
+-				bool scanning = fi.af_state == libcamera::controls::AfStateScanning;
+-				if (scanning || (af_wait_state == AF_WAIT_SCANNING && ++af_wait_timeout >= 16))
+-					af_wait_state = AF_WAIT_FINISHED;
+-				else if (af_wait_state == AF_WAIT_FINISHED)
+-					want_capture = true;
+-			}
+-			else if (timed_out || keypressed || timelapse_timed_out)
+-			{
+-				// Trigger a still capture, unless we timed out in timelapse or keypress mode
+-				if ((timed_out && options->timelapse) || (!keypressed && keypress))
++				// Trigger a still capture unless:
++				if (!output || // we have no output file
++					(timed_out && options->timelapse) || // timed out in timelapse mode
++					(!keypressed && keypress)) // no key was pressed (in keypress mode)
+ 					return;
+-
+-				keypressed = false;
+-				if (options->af_on_capture)
+-				{
+-					libcamera::ControlList cl;
+-					cl.set(libcamera::controls::AfMode, libcamera::controls::AfModeAuto);
+-					cl.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerStart);
+-					app.SetControls(cl);
+-					af_wait_state = AF_WAIT_SCANNING;
+-					af_wait_timeout = 0;
+-				}
+ 				else
+-					want_capture = true;
+-			}
+-			if (want_capture)
+-			{
+-				if (!output)
+-					return;
+-				keypressed = false;
+-				af_wait_state = AF_WAIT_NONE;
+-				timelapse_time = std::chrono::high_resolution_clock::now();
+-				app.StopCamera();
+-				app.Teardown();
+-				app.ConfigureStill(still_flags);
+-				if (options->af_on_capture)
+ 				{
+-					libcamera::ControlList cl;
+-					cl.set(libcamera::controls::AfMode, libcamera::controls::AfModeAuto);
+-					cl.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerCancel);
+-					app.SetControls(cl);
++					timelapse_time = std::chrono::high_resolution_clock::now();
++					app.StopCamera();
++					app.Teardown();
++					app.ConfigureStill(still_flags);
++					app.StartCamera();
+ 				}
+-				app.StartCamera();
+ 			}
+ 			else
++			{
++				CompletedRequestPtr &completed_request = std::get<CompletedRequestPtr>(msg.payload);
+ 				app.ShowPreview(completed_request, app.ViewfinderStream());
++			}
+ 		}
+ 		// In still capture mode, save a jpeg. Go back to viewfinder if in timelapse mode,
+ 		// otherwise quit.
+@@ -301,23 +423,15 @@ static void event_loop(LibcameraStillApp &app)
+ 		{
+ 			app.StopCamera();
+ 			LOG(1, "Still capture image received");
+-			save_images(app, completed_request);
++			save_images(app, std::get<CompletedRequestPtr>(msg.payload));
+ 			if (!options->metadata.empty())
+-				save_metadata(options, completed_request->metadata);
++				save_metadata(options, std::get<CompletedRequestPtr>(msg.payload)->metadata);
+ 			timelapse_frames = 0;
+ 			if (!options->immediate && (options->timelapse || options->signal || options->keypress))
+ 			{
+ 				app.Teardown();
+ 				app.ConfigureViewfinder();
+-				if (options->af_on_capture && options->afMode_index == -1)
+-				{
+-					libcamera::ControlList cl;
+-					cl.set(libcamera::controls::AfMode, libcamera::controls::AfModeAuto);
+-					cl.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerCancel);
+-					app.SetControls(cl);
+-				}
+ 				app.StartCamera();
+-				af_wait_state = AF_WAIT_NONE;
+ 			}
+ 			else
+ 				return;
+diff --git a/apps/libcamera_vid.cpp b/apps/libcamera_vid.cpp
+index 0eaeb8e..2634865 100644
+--- a/apps/libcamera_vid.cpp
++++ b/apps/libcamera_vid.cpp
+@@ -13,6 +13,7 @@
+ 
+ #include "core/libcamera_encoder.hpp"
+ #include "output/output.hpp"
++#include "../SignalServer/SignalServer.hpp"
+ 
+ using namespace std::placeholders;
+ 
+@@ -64,11 +65,17 @@ static int get_colourspace_flags(std::string const &codec)
+ 
+ static void event_loop(LibcameraEncoder &app)
+ {
++	SignalServer signal_server(8080);
++	std::string param;
++	signal_server.start();
++
+ 	VideoOptions const *options = app.GetOptions();
+ 	std::unique_ptr<Output> output = std::unique_ptr<Output>(Output::Create(options));
+ 	app.SetEncodeOutputReadyCallback(std::bind(&Output::OutputReady, output.get(), _1, _2, _3, _4));
+ 	app.SetMetadataReadyCallback(std::bind(&Output::MetadataReady, output.get(), _1));
+-
++	float scale = 0.0;
++	float offset_x = 0.0;
++	float offset_y = 0.0;
+ 	app.OpenCamera();
+ 	app.ConfigureVideo(get_colourspace_flags(options->codec));
+ 	app.StartEncoder();
+@@ -83,6 +90,8 @@ static void event_loop(LibcameraEncoder &app)
+ 
+ 	for (unsigned int count = 0; ; count++)
+ 	{
++		param = signal_server.read();
++
+ 		LibcameraEncoder::Msg msg = app.Wait();
+ 		if (msg.type == LibcameraApp::MsgType::Timeout)
+ 		{
+@@ -98,6 +107,8 @@ static void event_loop(LibcameraEncoder &app)
+ 		int key = get_key_or_signal(options, p);
+ 		if (key == '\n')
+ 			output->Signal();
++		if (!key)
++			key = param[0];
+ 
+ 		LOG(2, "Viewfinder frame " << count);
+ 		auto now = std::chrono::high_resolution_clock::now();
+@@ -113,6 +124,90 @@ static void event_loop(LibcameraEncoder &app)
+ 			return;
+ 		}
+ 
++
++		switch (key)
++		{
++		case 'f':
++		case 'F':
++		{
++			libcamera::ControlList controls;
++			controls.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerStart);
++			app.SetControls(controls);
++			break;
++		}
++		case 'w':
++		case 'W':
++		{
++			scale += 0.05;
++			break;
++		}
++		case 's':
++		case 'S':
++		{
++			scale -= 0.05;
++			break;
++		}
++		case 'l':
++		case 'L':
++		{
++			offset_x += 0.05;
++			break;
++		}
++		case 'j':
++		case 'J':
++		{
++			offset_x -= 0.05;
++			break;
++		}
++		case 'i':
++		case 'I':
++		{
++			offset_y -= 0.05;
++			break;
++		}
++		case 'k':
++		case 'K':
++		{
++			offset_y += 0.05;
++			break;
++		}
++		case 'm':
++		case 'M':
++		{
++			scale = 0.95;
++			break;
++		}
++		case 'r':
++		case 'R':
++		{
++			scale = 0.0;
++			break;
++		}
++		default:
++			(void)0;
++		}
++
++		if (scale > 0.95)
++			scale = 0.95;
++		else if (scale < 0.0)
++			scale = 0.0;
++
++		if (offset_x > scale / 2)
++			offset_x = scale / 2;
++		else if (offset_x < -(scale / 2))
++			offset_x = -(scale / 2);
++
++		if (offset_y > scale / 2)
++			offset_y = scale / 2;
++		else if (offset_y < -(scale / 2))
++			offset_y = -(scale / 2);
++
++		if (isalpha(key))
++		{
++			std::cout << "scale: " << scale << ", offset_x: " << offset_x << std::endl;
++
++			app.SetScalerCrop(scale / 2 + offset_x, scale / 2 + offset_y, 1 - scale, 1 - scale);
++		}
+ 		CompletedRequestPtr &completed_request = std::get<CompletedRequestPtr>(msg.payload);
+ 		app.EncodeBuffer(completed_request, app.VideoStream());
+ 		app.ShowPreview(completed_request, app.VideoStream());
+diff --git a/core/CMakeLists.txt b/core/CMakeLists.txt
+index b601538..a074717 100644
+--- a/core/CMakeLists.txt
++++ b/core/CMakeLists.txt
+@@ -10,7 +10,7 @@ set_source_files_properties(version.cpp PROPERTIES GENERATED 1)
+ add_library(libcamera_app libcamera_app.cpp post_processor.cpp version.cpp options.cpp)
+ add_dependencies(libcamera_app VersionCpp)
+ 
+-set_target_properties(libcamera_app PROPERTIES PREFIX "" IMPORT_PREFIX "" VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
++set_target_properties(libcamera_app PROPERTIES PREFIX "" IMPORT_PREFIX "")
+ target_link_libraries(libcamera_app pthread preview ${LIBCAMERA_LINK_LIBRARIES} ${Boost_LIBRARIES} post_processing_stages)
+ 
+ install(TARGETS libcamera_app LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+diff --git a/core/frame_info.hpp b/core/frame_info.hpp
+index 11293f9..d531354 100644
+--- a/core/frame_info.hpp
++++ b/core/frame_info.hpp
+@@ -15,8 +15,7 @@
+ struct FrameInfo
+ {
+ 	FrameInfo(libcamera::ControlList &ctrls)
+-		: exposure_time(0.0), digital_gain(0.0), colour_gains({ { 0.0f, 0.0f } }), focus(0.0), aelock(false),
+-		  lens_position(-1.0), af_state(0)
++		: exposure_time(0.0), digital_gain(0.0), colour_gains({ { 0.0f, 0.0f } }), focus(0.0), aelock(false)
+ 	{
+ 		auto exp = ctrls.get(libcamera::controls::ExposureTime);
+ 		if (exp)
+@@ -43,14 +42,6 @@ struct FrameInfo
+ 		auto ae = ctrls.get(libcamera::controls::AeLocked);
+ 		if (ae)
+ 			aelock = *ae;
+-
+-		auto lp = ctrls.get(libcamera::controls::LensPosition);
+-		if (lp)
+-			lens_position = *lp;
+-
+-		auto afs = ctrls.get(libcamera::controls::AfState);
+-		if (afs)
+-			af_state = *afs;
+ 	}
+ 
+ 	std::string ToString(std::string &info_string) const
+@@ -83,25 +74,6 @@ struct FrameInfo
+ 					value << focus;
+ 				else if (t == "%aelock")
+ 					value << aelock;
+-				else if (t == "%lp")
+-					value << lens_position;
+-				else if (t == "%afstate")
+-				{
+-					switch (af_state)
+-					{
+-					case libcamera::controls::AfStateIdle:
+-						value << "idle";
+-						break;
+-					case libcamera::controls::AfStateScanning:
+-						value << "scanning";
+-						break;
+-					case libcamera::controls::AfStateFocused:
+-						value << "focused";
+-						break;
+-					default:
+-						value << "failed";
+-					}
+-				}
+ 
+ 				parsed.replace(pos, t.length(), value.str());
+ 			}
+@@ -118,12 +90,9 @@ struct FrameInfo
+ 	float focus;
+ 	float fps;
+ 	bool aelock;
+-	float lens_position;
+-	int af_state;
+ 
+ private:
+ 	// Info text tokens.
+-	inline static const std::string tokens[] = { "%frame", "%fps", "%exp", "%ag", "%dg",
+-						     "%rg", "%bg",  "%focus", "%aelock",
+-						     "%lp", "%afstate" };
++	inline static const std::string tokens[] = { "%frame", "%fps", "%exp",	 "%ag",	   "%dg",
++												 "%rg",	   "%bg",  "%focus", "%aelock" };
+ };
+diff --git a/core/libcamera_app.cpp b/core/libcamera_app.cpp
+index d3a6b63..e6dfd1a 100644
+--- a/core/libcamera_app.cpp
++++ b/core/libcamera_app.cpp
+@@ -11,7 +11,6 @@
+ #include "core/libcamera_app.hpp"
+ #include "core/options.hpp"
+ 
+-#include <cmath>
+ #include <fcntl.h>
+ 
+ #include <sys/ioctl.h>
+@@ -30,9 +29,7 @@ static void check_camera_stack()
+ 		return;
+ 
+ 	v4l2_capability caps;
+-	unsigned long request = VIDIOC_QUERYCAP;
+-
+-	int ret = ioctl(fd, request, &caps);
++	int ret = ioctl(fd, VIDIOC_QUERYCAP, &caps);
+ 	close(fd);
+ 
+ 	if (ret < 0 || strcmp((char *)caps.driver, "bm2835 mmal"))
+@@ -57,7 +54,9 @@ static libcamera::PixelFormat mode_to_pixel_format(Mode const &mode)
+ 		{ Mode(0, 0, 12, true), libcamera::formats::SBGGR12_CSI2P },
+ 	};
+ 
+-	auto it = std::find_if(table.begin(), table.end(), [&mode] (auto &m) { return mode.bit_depth == m.first.bit_depth && mode.packed == m.first.packed; });
++	auto it = std::find_if(table.begin(), table.end(),
++						   [&mode](auto &m)
++						   { return mode.bit_depth == m.first.bit_depth && mode.packed == m.first.packed; });
+ 	if (it != table.end())
+ 		return it->second;
+ 
+@@ -89,12 +88,6 @@ std::string const &LibcameraApp::CameraId() const
+ 	return camera_->id();
+ }
+ 
+-std::string LibcameraApp::CameraModel() const
+-{
+-	auto model = camera_->properties().get(properties::Model);
+-	return model ? *model : camera_->id();
+-}
+-
+ void LibcameraApp::OpenCamera()
+ {
+ 	// Make a preview window.
+@@ -133,34 +126,8 @@ void LibcameraApp::OpenCamera()
+ 	if (!options_->post_process_file.empty())
+ 		post_processor_.Read(options_->post_process_file);
+ 	// The queue takes over ownership from the post-processor.
+-	post_processor_.SetCallback(
+-		[this](CompletedRequestPtr &r) { this->msg_queue_.Post(Msg(MsgType::RequestComplete, std::move(r))); });
+-
+-	if (options_->framerate)
+-	{
+-		std::unique_ptr<CameraConfiguration> config = camera_->generateConfiguration({ libcamera::StreamRole::Raw });
+-		const libcamera::StreamFormats &formats = config->at(0).formats();
+-
+-		// Suppress log messages when enumerating camera modes.
+-		libcamera::logSetLevel("RPI", "ERROR");
+-		libcamera::logSetLevel("Camera", "ERROR");
+-
+-		for (const auto &pix : formats.pixelformats())
+-		{
+-			for (const auto &size : formats.sizes(pix))
+-			{
+-				config->at(0).size = size;
+-				config->at(0).pixelFormat = pix;
+-				config->validate();
+-				camera_->configure(config.get());
+-				auto fd_ctrl = camera_->controls().find(&controls::FrameDurationLimits);
+-				sensor_modes_.emplace_back(size, pix, 1.0e6 / fd_ctrl->second.min().get<int64_t>());
+-			}
+-		}
+-
+-		libcamera::logSetLevel("RPI", "INFO");
+-		libcamera::logSetLevel("Camera", "INFO");
+-	}
++	post_processor_.SetCallback([this](CompletedRequestPtr &r)
++								{ this->msg_queue_.Post(Msg(MsgType::RequestComplete, std::move(r))); });
+ }
+ 
+ void LibcameraApp::CloseCamera()
+@@ -179,62 +146,13 @@ void LibcameraApp::CloseCamera()
+ 		LOG(2, "Camera closed");
+ }
+ 
+-Mode LibcameraApp::selectModeForFramerate(const libcamera::Size &req, double fps)
+-{
+-	auto scoreFormat = [](double desired, double actual) -> double
+-	{
+-		double score = desired - actual;
+-		// Smaller desired dimensions are preferred.
+-		if (score < 0.0)
+-			score = (-score) / 8;
+-		// Penalise non-exact matches.
+-		if (actual != desired)
+-			score *= 2;
+-
+-		return score;
+-	};
+-
+-	constexpr float penalty_AR = 1500.0;
+-	constexpr float penalty_BD = 500.0;
+-	constexpr float penalty_FPS = 2000.0;
+-
+-	double best_score = std::numeric_limits<double>::max(), score;
+-	SensorMode best_mode;
+-
+-	LOG(1, "Mode selection:");
+-	for (const auto &mode : sensor_modes_)
+-	{
+-		double reqAr = static_cast<double>(req.width) / req.height;
+-		double fmtAr = static_cast<double>(mode.size.width) / mode.size.height;
+-
+-		// Similar scoring mechanism that our pipeline handler does internally.
+-		score = scoreFormat(req.width, mode.size.width);
+-		score += scoreFormat(req.height, mode.size.height);
+-		score += penalty_AR * scoreFormat(reqAr, fmtAr);
+-		score += penalty_FPS * std::abs(fps - std::min(mode.fps, fps));
+-		score += penalty_BD * (16 - mode.depth());
+-
+-		if (score <= best_score)
+-		{
+-			best_score = score;
+-			best_mode.size = mode.size;
+-			best_mode.format = mode.format;
+-		}
+-
+-		LOG(1, "    " << mode.format.toString() << " " << mode.size.toString() << " - Score: " << score);
+-	}
+-
+-	return { best_mode.size.width, best_mode.size.height, best_mode.depth(), true };
+-}
+-
+ void LibcameraApp::ConfigureViewfinder()
+ {
+ 	LOG(2, "Configuring viewfinder...");
+ 
+-	bool select_mode = options_->framerate && options_->framerate.value() && options_->viewfinder_mode_string.empty();
+ 	int lores_stream_num = 0, raw_stream_num = 0;
+ 	bool have_lores_stream = options_->lores_width && options_->lores_height;
+-	bool have_raw_stream = options_->viewfinder_mode.bit_depth || select_mode;
++	bool have_raw_stream = options_->viewfinder_mode.bit_depth;
+ 
+ 	StreamRoles stream_roles = { StreamRole::Viewfinder };
+ 	int stream_num = 1;
+@@ -277,8 +195,6 @@ void LibcameraApp::ConfigureViewfinder()
+ 	// Now we get to override any of the default settings from the options_->
+ 	configuration_->at(0).pixelFormat = libcamera::formats::YUV420;
+ 	configuration_->at(0).size = size;
+-	if (options_->viewfinder_buffer_count > 0)
+-		configuration_->at(0).bufferCount = options_->viewfinder_buffer_count;
+ 
+ 	if (have_lores_stream)
+ 	{
+@@ -291,9 +207,6 @@ void LibcameraApp::ConfigureViewfinder()
+ 		configuration_->at(lores_stream_num).bufferCount = configuration_->at(0).bufferCount;
+ 	}
+ 
+-	if (select_mode)
+-		options_->viewfinder_mode = selectModeForFramerate(size, options_->framerate.value());
+-
+ 	if (have_raw_stream)
+ 	{
+ 		configuration_->at(raw_stream_num).size = options_->viewfinder_mode.Size();
+@@ -341,8 +254,6 @@ void LibcameraApp::ConfigureStill(unsigned int flags)
+ 		configuration_->at(0).bufferCount = 2;
+ 	else if ((flags & FLAG_STILL_BUFFER_MASK) == FLAG_STILL_TRIPLE_BUFFER)
+ 		configuration_->at(0).bufferCount = 3;
+-	else if (options_->buffer_count > 0)
+-		configuration_->at(0).bufferCount = options_->buffer_count;
+ 	if (options_->width)
+ 		configuration_->at(0).size.width = options_->width;
+ 	if (options_->height)
+@@ -357,6 +268,9 @@ void LibcameraApp::ConfigureStill(unsigned int flags)
+ 		configuration_->at(1).size = options_->mode.Size();
+ 		configuration_->at(1).pixelFormat = mode_to_pixel_format(options_->mode);
+ 	}
++	else if (!options_->rawfull)
++		configuration_->at(1).size = configuration_->at(0).size;
++
+ 	configuration_->at(1).bufferCount = configuration_->at(0).bufferCount;
+ 
+ 	configureDenoise(options_->denoise == "auto" ? "cdn_hq" : options_->denoise);
+@@ -370,12 +284,86 @@ void LibcameraApp::ConfigureStill(unsigned int flags)
+ 	LOG(2, "Still capture setup complete");
+ }
+ 
++void LibcameraApp::ConfigureVideo(Options *options, unsigned int flags)
++{
++	LOG(2, "Configuring video...");
++
++	bool have_raw_stream = (flags & FLAG_VIDEO_RAW) || options->mode.bit_depth;
++	bool have_lores_stream = options->lores_width && options->lores_height;
++	StreamRoles stream_roles = { StreamRole::VideoRecording };
++	int lores_index = 1;
++	if (have_raw_stream)
++	{
++		stream_roles.push_back(StreamRole::Raw);
++		lores_index = 2;
++	}
++	if (have_lores_stream)
++		stream_roles.push_back(StreamRole::Viewfinder);
++	configuration_ = camera_->generateConfiguration(stream_roles);
++	if (!configuration_)
++		throw std::runtime_error("failed to generate video configuration");
++
++	// Now we get to override any of the default settings from the options->
++	StreamConfiguration &cfg = configuration_->at(0);
++	cfg.pixelFormat = libcamera::formats::YUV420;
++	cfg.bufferCount = 6; // 6 buffers is better than 4
++	if (options->width)
++		cfg.size.width = options->width;
++	if (options->height)
++		cfg.size.height = options->height;
++	if (flags & FLAG_VIDEO_JPEG_COLOURSPACE)
++		cfg.colorSpace = libcamera::ColorSpace::Sycc;
++	else if (cfg.size.width >= 1280 || cfg.size.height >= 720)
++		cfg.colorSpace = libcamera::ColorSpace::Rec709;
++	else
++		cfg.colorSpace = libcamera::ColorSpace::Smpte170m;
++	configuration_->transform = options->transform;
++
++	post_processor_.AdjustConfig("video", &configuration_->at(0));
++
++	if (have_raw_stream)
++	{
++		if (options->mode.bit_depth)
++		{
++			configuration_->at(1).size = options->mode.Size();
++			configuration_->at(1).pixelFormat = mode_to_pixel_format(options->mode);
++		}
++		else if (!options->rawfull)
++			configuration_->at(1).size = configuration_->at(0).size;
++		configuration_->at(1).bufferCount = configuration_->at(0).bufferCount;
++	}
++	if (have_lores_stream)
++	{
++		Size lores_size(options->lores_width, options->lores_height);
++		lores_size.alignDownTo(2, 2);
++		if (lores_size.width > configuration_->at(0).size.width ||
++			lores_size.height > configuration_->at(0).size.height)
++			throw std::runtime_error("Low res image larger than video");
++		configuration_->at(lores_index).pixelFormat = libcamera::formats::YUV420;
++		configuration_->at(lores_index).size = lores_size;
++		configuration_->at(lores_index).bufferCount = configuration_->at(0).bufferCount;
++	}
++	configuration_->transform = options->transform;
++
++	configureDenoise(options->denoise == "auto" ? "cdn_fast" : options->denoise);
++	setupCapture();
++
++	streams_["video"] = configuration_->at(0).stream();
++	if (have_raw_stream)
++		streams_["raw"] = configuration_->at(1).stream();
++	if (have_lores_stream)
++		streams_["lores"] = configuration_->at(lores_index).stream();
++
++	post_processor_.Configure();
++
++	LOG(2, "Video setup complete");
++}
++
+ void LibcameraApp::ConfigureVideo(unsigned int flags)
+ {
+ 	LOG(2, "Configuring video...");
+ 
+-	bool select_mode = options_->framerate && options_->framerate.value() && options_->mode_string.empty();
+-	bool have_raw_stream = (flags & FLAG_VIDEO_RAW) || options_->mode.bit_depth || select_mode;
++	bool have_raw_stream = (flags & FLAG_VIDEO_RAW) || options_->mode.bit_depth;
+ 	bool have_lores_stream = options_->lores_width && options_->lores_height;
+ 	StreamRoles stream_roles = { StreamRole::VideoRecording };
+ 	int lores_index = 1;
+@@ -394,8 +382,6 @@ void LibcameraApp::ConfigureVideo(unsigned int flags)
+ 	StreamConfiguration &cfg = configuration_->at(0);
+ 	cfg.pixelFormat = libcamera::formats::YUV420;
+ 	cfg.bufferCount = 6; // 6 buffers is better than 4
+-	if (options_->buffer_count > 0)
+-		cfg.bufferCount = options_->buffer_count;
+ 	if (options_->width)
+ 		cfg.size.width = options_->width;
+ 	if (options_->height)
+@@ -410,9 +396,6 @@ void LibcameraApp::ConfigureVideo(unsigned int flags)
+ 
+ 	post_processor_.AdjustConfig("video", &configuration_->at(0));
+ 
+-	if (select_mode)
+-		options_->mode = selectModeForFramerate(cfg.size, options_->framerate.value());
+-
+ 	if (have_raw_stream)
+ 	{
+ 		if (options_->mode.bit_depth)
+@@ -499,24 +482,6 @@ void LibcameraApp::StartCamera()
+ 		controls_.set(controls::ScalerCrop, crop);
+ 	}
+ 
+-	if (!controls_.get(controls::AfWindows) && !controls_.get(controls::AfMetering) && options_->afWindow_width != 0 &&
+-		options_->afWindow_height != 0)
+-	{
+-		Rectangle sensor_area = *camera_->properties().get(properties::ScalerCropMaximum);
+-		int x = options_->afWindow_x * sensor_area.width;
+-		int y = options_->afWindow_y * sensor_area.height;
+-		int w = options_->afWindow_width * sensor_area.width;
+-		int h = options_->afWindow_height * sensor_area.height;
+-		Rectangle afwindows_rectangle[1];
+-		afwindows_rectangle[0] = Rectangle(x, y, w, h);
+-		afwindows_rectangle[0].translateBy(sensor_area.topLeft());
+-		LOG(2, "Using AfWindow " << afwindows_rectangle[0].toString());
+-		//activate the AfMeteringWindows
+-		controls_.set(controls::AfMetering, controls::AfMeteringWindows);
+-		//set window
+-		controls_.set(controls::AfWindows, afwindows_rectangle);
+-	}
+-
+ 	// Framerate is a bit weird. If it was set programmatically, we go with that, but
+ 	// otherwise it applies only to preview/video modes. For stills capture we set it
+ 	// as long as possible so that we get whatever the exposure profile wants.
+@@ -525,11 +490,10 @@ void LibcameraApp::StartCamera()
+ 		if (StillStream())
+ 			controls_.set(controls::FrameDurationLimits,
+ 						  libcamera::Span<const int64_t, 2>({ INT64_C(100), INT64_C(1000000000) }));
+-		else if (!options_->framerate || options_->framerate.value() > 0)
++		else if (options_->framerate > 0)
+ 		{
+-			int64_t frame_time = 1000000 / options_->framerate.value_or(DEFAULT_FRAMERATE); // in us
+-			controls_.set(controls::FrameDurationLimits,
+-						  libcamera::Span<const int64_t, 2>({ frame_time, frame_time }));
++			int64_t frame_time = 1000000 / options_->framerate; // in us
++			controls_.set(controls::FrameDurationLimits, libcamera::Span<const int64_t, 2>({ frame_time, frame_time }));
+ 		}
+ 	}
+ 
+@@ -556,55 +520,20 @@ void LibcameraApp::StartCamera()
+ 		controls_.set(controls::Saturation, options_->saturation);
+ 	if (!controls_.get(controls::Sharpness))
+ 		controls_.set(controls::Sharpness, options_->sharpness);
++	if (!controls_.get(libcamera::controls::AfTrigger) && options_->autofocus && !options_->continue_autofocus)
++		controls_.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerStart);
++	if (!controls_.get(libcamera::controls::AfTrigger) && options_->continue_autofocus)
++		controls_.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerCancel);
+ 
+-	// AF Controls, where supported and not already set
+-	if (!controls_.get(controls::AfMode) && camera_->controls().count(&controls::AfMode) > 0)
+-	{
+-		int afm = options_->afMode_index;
+-		if (afm == -1)
+-		{
+-			// Choose a default AF mode based on other options
+-			if (options_->lens_position || options_->set_default_lens_position || options_->af_on_capture)
+-				afm = controls::AfModeManual;
+-			else
+-				afm = camera_->controls().at(&controls::AfMode).max().get<int>();
+-		}
+-		controls_.set(controls::AfMode, afm);
+-	}
+-	if (!controls_.get(controls::AfRange) && camera_->controls().count(&controls::AfRange) > 0)
+-		controls_.set(controls::AfRange, options_->afRange_index);
+-	if (!controls_.get(controls::AfSpeed) && camera_->controls().count(&controls::AfSpeed) > 0)
+-		controls_.set(controls::AfSpeed, options_->afSpeed_index);
+-
+-	if (controls_.get(controls::AfMode).value_or(controls::AfModeManual) == controls::AfModeAuto)
+-	{
+-		// When starting a viewfinder or video stream in AF "auto" mode,
+-		// trigger a scan now (but don't move the lens when capturing a still).
+-		// If an application requires more control over AF triggering, it may
+-		// override this behaviour with prior settings of AfMode or AfTrigger.
+-		if (!StillStream() && !controls_.get(controls::AfTrigger))
+-			controls_.set(controls::AfTrigger, controls::AfTriggerStart);
+-	}
+-	else if ((options_->lens_position || options_->set_default_lens_position) &&
+-			 camera_->controls().count(&controls::LensPosition) > 0 && !controls_.get(controls::LensPosition))
+-	{
+-		float f;
+-		if (options_->lens_position)
+-			f = options_->lens_position.value();
+-		else
+-			f = camera_->controls().at(&controls::LensPosition).def().get<float>();
+-		LOG(2, "Setting LensPosition: " << f);
+-		controls_.set(controls::LensPosition, f);
+-	}
++	post_processor_.Start();
+ 
+ 	if (camera_->start(&controls_))
+ 		throw std::runtime_error("failed to start camera");
++
+ 	controls_.clear();
+ 	camera_started_ = true;
+ 	last_timestamp_ = 0;
+ 
+-	post_processor_.Start();
+-
+ 	camera_->requestCompleted.connect(this, &LibcameraApp::requestComplete);
+ 
+ 	for (std::unique_ptr<Request> &request : requests_)
+@@ -768,15 +697,11 @@ void LibcameraApp::ShowPreview(CompletedRequestPtr &completed_request, Stream *s
+ 	preview_cond_var_.notify_one();
+ }
+ 
+-void LibcameraApp::SetControls(const ControlList &controls)
++void LibcameraApp::SetControls(ControlList &controls)
+ {
+ 	std::lock_guard<std::mutex> lock(control_mutex_);
+-
+-	// Add new controls to the stored list. If a control is duplicated,
+-	// the value in the argument replaces the previously stored value.
+-	// These controls will be applied to the next StartCamera or request.
+-	for (const auto &c : controls)
+-		controls_.set(c.first, c.second);
++	controls_ = std::move(controls);
++	post_processor_.Configure();
+ }
+ 
+ StreamInfo LibcameraApp::GetStreamInfo(Stream const *stream) const
+@@ -786,11 +711,28 @@ StreamInfo LibcameraApp::GetStreamInfo(Stream const *stream) const
+ 	info.width = cfg.size.width;
+ 	info.height = cfg.size.height;
+ 	info.stride = cfg.stride;
+-	info.pixel_format = cfg.pixelFormat;
+-	info.colour_space = cfg.colorSpace;
++	info.pixel_format = stream->configuration().pixelFormat;
++	info.colour_space = stream->configuration().colorSpace;
+ 	return info;
+ }
+ 
++void LibcameraApp::SetScalerCrop(float roi_x, float roi_y, float roi_width, float roi_height)
++{
++	if (!controls_.get(controls::ScalerCrop))
++	{
++		Rectangle sensor_area = camera_->properties().get(properties::ScalerCropMaximum).value();
++		int x = roi_x * sensor_area.width;
++		int y = roi_y * sensor_area.height;
++		int w = roi_width * sensor_area.width;
++		int h = roi_height * sensor_area.height;
++		Rectangle crop(x, y, w, h);
++		crop.translateBy(sensor_area.topLeft());
++		if (options_->verbose)
++			std::cout << "Using crop " << crop.toString() << std::endl;
++		controls_.set(controls::ScalerCrop, crop);
++	}
++}
++
+ void LibcameraApp::setupCapture()
+ {
+ 	// First finish setting up the configuration.
+diff --git a/core/libcamera_app.hpp b/core/libcamera_app.hpp
+index 2f0f329..efcb621 100644
+--- a/core/libcamera_app.hpp
++++ b/core/libcamera_app.hpp
+@@ -35,7 +35,6 @@
+ 
+ struct Options;
+ class Preview;
+-struct Mode;
+ 
+ namespace controls = libcamera::controls;
+ namespace properties = libcamera::properties;
+@@ -95,13 +94,13 @@ public:
+ 	Options *GetOptions() const { return options_.get(); }
+ 
+ 	std::string const &CameraId() const;
+-	std::string CameraModel() const;
+ 	void OpenCamera();
+ 	void CloseCamera();
+ 
+ 	void ConfigureViewfinder();
+ 	void ConfigureStill(unsigned int flags = FLAG_STILL_NONE);
+ 	void ConfigureVideo(unsigned int flags = FLAG_VIDEO_NONE);
++	void ConfigureVideo(Options *options, unsigned int flags);
+ 
+ 	void Teardown();
+ 	void StartCamera();
+@@ -122,8 +121,9 @@ public:
+ 
+ 	void ShowPreview(CompletedRequestPtr &completed_request, Stream *stream);
+ 
+-	void SetControls(const ControlList &controls);
++	void SetControls(ControlList &controls);
+ 	StreamInfo GetStreamInfo(Stream const *stream) const;
++	void SetScalerCrop(float roi_x, float roi_y, float roi_width, float roi_height);
+ 
+ 	static unsigned int verbosity;
+ 	static unsigned int GetVerbosity() { return verbosity; }
+@@ -176,31 +176,6 @@ private:
+ 		CompletedRequestPtr completed_request;
+ 		Stream *stream;
+ 	};
+-	struct SensorMode
+-	{
+-		SensorMode()
+-			: size({}), format({}), fps(0)
+-		{
+-		}
+-		SensorMode(libcamera::Size _size, libcamera::PixelFormat _format, double _fps)
+-			: size(_size), format(_format), fps(_fps)
+-		{
+-		}
+-		unsigned int depth() const
+-		{
+-			// This is a really ugly way of getting the bit depth of the format.
+-			// But apart from duplicating the massive bayer format table, there is
+-			// no other way to determine this.
+-			std::string fmt = format.toString();
+-			unsigned int mode_depth = fmt.find("8") != std::string::npos ? 8 :
+-									  fmt.find("10") != std::string::npos ? 10 :
+-									  fmt.find("12") != std::string::npos ? 12 : 16;
+-			return mode_depth;
+-		}
+-		libcamera::Size size;
+-		libcamera::PixelFormat format;
+-		double fps;
+-	};
+ 
+ 	void setupCapture();
+ 	void makeRequests();
+@@ -211,7 +186,6 @@ private:
+ 	void stopPreview();
+ 	void previewThread();
+ 	void configureDenoise(const std::string &denoise_mode);
+-	Mode selectModeForFramerate(const libcamera::Size &req, double fps);
+ 
+ 	std::unique_ptr<CameraManager> camera_manager_;
+ 	std::shared_ptr<Camera> camera_;
+@@ -227,7 +201,6 @@ private:
+ 	bool camera_started_ = false;
+ 	std::mutex camera_stop_mutex_;
+ 	MessageQueue<Msg> msg_queue_;
+-	std::vector<SensorMode> sensor_modes_;
+ 	// Related to the preview window.
+ 	std::unique_ptr<Preview> preview_;
+ 	std::map<int, CompletedRequestPtr> preview_completed_requests_;
+diff --git a/core/libcamera_encoder.hpp b/core/libcamera_encoder.hpp
+index 892b153..f56d456 100644
+--- a/core/libcamera_encoder.hpp
++++ b/core/libcamera_encoder.hpp
+@@ -5,8 +5,6 @@
+  * libcamera_encoder.cpp - libcamera video encoding class.
+  */
+ 
+-#pragma once
+-
+ #include "core/libcamera_app.hpp"
+ #include "core/stream_info.hpp"
+ #include "core/video_options.hpp"
+diff --git a/core/options.cpp b/core/options.cpp
+index 1453fb8..7495133 100644
+--- a/core/options.cpp
++++ b/core/options.cpp
+@@ -4,10 +4,6 @@
+  *
+  * options.cpp - common program options helpers
+  */
+-#include <fcntl.h>
+-#include <linux/v4l2-controls.h>
+-#include <linux/videodev2.h>
+-#include <sys/ioctl.h>
+ #include <algorithm>
+ #include <iomanip>
+ #include <iostream>
+@@ -51,16 +47,6 @@ std::string Mode::ToString() const
+ 	}
+ }
+ 
+-static int xioctl(int fd, unsigned long ctl, void *arg)
+-{
+-	int ret, num_tries = 10;
+-	do
+-	{
+-		ret = ioctl(fd, ctl, arg);
+-	} while (ret == -1 && errno == EINTR && num_tries-- > 0);
+-	return ret;
+-}
+-
+ bool Options::Parse(int argc, char *argv[])
+ {
+ 	using namespace boost::program_options;
+@@ -77,53 +63,6 @@ bool Options::Parse(int argc, char *argv[])
+ 		notify(vm);
+ 	}
+ 
+-	// This is to get round the fact that the boost option parser does not
+-	// allow std::optional types.
+-	if (framerate_ != -1.0)
+-		framerate = framerate_;
+-
+-	// Check if --nopreview is set, and if no info-text string was provided
+-	// null the defaulted string so nothing gets displayed to stderr.
+-	if (nopreview && vm["info-text"].defaulted())
+-		info_text = "";
+-
+-	// lens_position is even more awkward, because we have two "default"
+-	// behaviours: Either no lens movement at all (if option is not given),
+-	// or libcamera's default control value (typically the hyperfocal).
+-	float f = 0.0;
+-	if (std::istringstream(lens_position_) >> f)
+-		lens_position = f;
+-	else if (lens_position_ == "default")
+-		set_default_lens_position = true;
+-	else if (!lens_position_.empty())
+-		throw std::runtime_error("Invalid lens position: " + lens_position_);
+-
+-	// HDR control. Set this before opening or listing any cameras.
+-	// Currently this does not exist in libcamera, so go directly to V4L2
+-	// XXX it's not obvious which v4l2-subdev to use for which camera!
+-	{
+-		bool ok = false;
+-		for (int i = 0; i < 4 && !ok; i++)
+-		{
+-			std::string dev("/dev/v4l-subdev");
+-			dev += (char)('0' + i);
+-			int fd = open(dev.c_str(), O_RDWR, 0);
+-			if (fd < 0)
+-				continue;
+-
+-			v4l2_control ctrl { V4L2_CID_WIDE_DYNAMIC_RANGE, hdr };
+-			ok = !xioctl(fd, VIDIOC_S_CTRL, &ctrl);
+-			close(fd);
+-		}
+-		if (hdr && !ok)
+-			LOG_ERROR("WARNING: Unable to set HDR mode");
+-	}
+-
+-	// We have to pass the tuning file name through an environment variable.
+-	// Note that we only overwrite the variable if the option was given.
+-	if (tuning_file != "-")
+-		setenv("LIBCAMERA_RPI_TUNING_FILE", tuning_file.c_str(), 1);
+-
+ 	// Set the verbosity
+ 	LibcameraApp::verbosity = verbose;
+ 
+@@ -200,7 +139,7 @@ bool Options::Parse(int argc, char *argv[])
+ 
+ 						auto fd_ctrl = cam->controls().find(&controls::FrameDurationLimits);
+ 						auto crop_ctrl = cam->properties().get(properties::ScalerCropMaximum);
+-						double fps = fd_ctrl == cam->controls().end() ? NAN : (1e6 / fd_ctrl->second.min().get<int64_t>());
++						double fps = 1e6 / fd_ctrl->second.min().get<int64_t>();
+ 						std::cout << std::fixed << std::setprecision(2) << "["
+ 								  << fps << " fps - " << crop_ctrl->toString() << " crop" << "]";
+ 						if (--num)
+@@ -242,9 +181,6 @@ bool Options::Parse(int argc, char *argv[])
+ 	if (sscanf(roi.c_str(), "%f,%f,%f,%f", &roi_x, &roi_y, &roi_width, &roi_height) != 4)
+ 		roi_x = roi_y = roi_width = roi_height = 0; // don't set digital zoom
+ 
+-	if (sscanf(afWindow.c_str(), "%f,%f,%f,%f", &afWindow_x, &afWindow_y, &afWindow_width, &afWindow_height) != 4)
+-		afWindow_x = afWindow_y = afWindow_width = afWindow_height = 0; // don't set auto focus windows
+-
+ 	std::map<std::string, int> metering_table =
+ 		{ { "centre", libcamera::controls::MeteringCentreWeighted },
+ 			{ "spot", libcamera::controls::MeteringSpot },
+@@ -265,31 +201,6 @@ bool Options::Parse(int argc, char *argv[])
+ 		throw std::runtime_error("Invalid exposure mode:" + exposure);
+ 	exposure_index = exposure_table[exposure];
+ 
+-	std::map<std::string, int> afMode_table =
+-		{ { "default", -1 },
+-			{ "manual", libcamera::controls::AfModeManual },
+-			{ "auto", libcamera::controls::AfModeAuto },
+-			{ "continuous", libcamera::controls::AfModeContinuous } };
+-	if (afMode_table.count(afMode) == 0)
+-		throw std::runtime_error("Invalid AfMode:" + afMode);
+-	afMode_index = afMode_table[afMode];
+-
+-	std::map<std::string, int> afRange_table =
+-		{ { "normal", libcamera::controls::AfRangeNormal },
+-			{ "macro", libcamera::controls::AfRangeMacro },
+-			{ "full", libcamera::controls::AfRangeFull } };
+-	if (afRange_table.count(afRange) == 0)
+-		throw std::runtime_error("Invalid AfRange mode:" + exposure);
+-	afRange_index = afRange_table[afRange];
+-
+-
+-	std::map<std::string, int> afSpeed_table =
+-		{ { "normal", libcamera::controls::AfSpeedNormal },
+-		    { "fast", libcamera::controls::AfSpeedFast } };
+-	if (afSpeed_table.count(afSpeed) == 0)
+-		throw std::runtime_error("Invalid afSpeed mode:" + afSpeed);
+-	afSpeed_index = afSpeed_table[afSpeed];
+-
+ 	std::map<std::string, int> awb_table =
+ 		{ { "auto", libcamera::controls::AwbAuto },
+ 			{ "normal", libcamera::controls::AwbAuto },
+@@ -312,6 +223,11 @@ bool Options::Parse(int argc, char *argv[])
+ 	saturation = std::clamp(saturation, 0.0f, 15.99f); // limits are arbitrary..
+ 	sharpness = std::clamp(sharpness, 0.0f, 15.99f); // limits are arbitrary..
+ 
++	// We have to pass the tuning file name through an environment variable.
++	// Note that we only overwrite the variable if the option was given.
++	if (tuning_file != "-")
++		setenv("LIBCAMERA_RPI_TUNING_FILE", tuning_file.c_str(), 1);
++
+ 	if (strcasecmp(metadata_format.c_str(), "json") == 0)
+ 		metadata_format = "json";
+ 	else if (strcasecmp(metadata_format.c_str(), "txt") == 0)
+@@ -369,34 +285,16 @@ void Options::Print() const
+ 	std::cerr << "    contrast: " << contrast << std::endl;
+ 	std::cerr << "    saturation: " << saturation << std::endl;
+ 	std::cerr << "    sharpness: " << sharpness << std::endl;
+-	std::cerr << "    framerate: " << framerate.value_or(DEFAULT_FRAMERATE) << std::endl;
++	std::cerr << "    framerate: " << framerate << std::endl;
+ 	std::cerr << "    denoise: " << denoise << std::endl;
+ 	std::cerr << "    viewfinder-width: " << viewfinder_width << std::endl;
+ 	std::cerr << "    viewfinder-height: " << viewfinder_height << std::endl;
+ 	std::cerr << "    tuning-file: " << (tuning_file == "-" ? "(libcamera)" : tuning_file) << std::endl;
+ 	std::cerr << "    lores-width: " << lores_width << std::endl;
+ 	std::cerr << "    lores-height: " << lores_height << std::endl;
+-	if (afMode_index != -1)
+-		std::cerr << "    autofocus-mode: " << afMode << std::endl;
+-	if (afRange_index != -1)
+-		std::cerr << "    autofocus-range: " << afRange << std::endl;
+-	if (afSpeed_index != -1)
+-		std::cerr << "    autofocus-speed: " << afSpeed << std::endl;
+-	if (afWindow_width == 0 || afWindow_height == 0)
+-		std::cerr << "    autofocus-window: all" << std::endl;
+-	else
+-		std::cerr << "    autofocus-window: " << afWindow_x << "," << afWindow_y << "," << afWindow_width << ","
+-				  << afWindow_height << std::endl;
+-	if (!lens_position_.empty())
+-		std::cerr << "    lens-position: " << lens_position_ << std::endl;
+-	if (hdr)
+-		std::cerr << "    hdr: enabled" << hdr << std::endl;
++
+ 	std::cerr << "    mode: " << mode.ToString() << std::endl;
+ 	std::cerr << "    viewfinder-mode: " << viewfinder_mode.ToString() << std::endl;
+-	if (buffer_count > 0)
+-		std::cerr << "    buffer-count: " << buffer_count << std::endl;
+-	if (viewfinder_buffer_count > 0)
+-		std::cerr << "    viewfinder-buffer-count: " << viewfinder_buffer_count << std::endl;
+ 	std::cerr << "    metadata: " << metadata << std::endl;
+ 	std::cerr << "    metadata-format: " << metadata_format << std::endl;
+ }
+diff --git a/core/options.hpp b/core/options.hpp
+index 09fa3aa..e54a9ce 100644
+--- a/core/options.hpp
++++ b/core/options.hpp
+@@ -9,7 +9,6 @@
+ 
+ #include <fstream>
+ #include <iostream>
+-#include <optional>
+ 
+ #include <boost/program_options.hpp>
+ 
+@@ -22,8 +21,6 @@
+ #include "core/logging.hpp"
+ #include "core/version.hpp"
+ 
+-static constexpr double DEFAULT_FRAMERATE = 30.0;
+-
+ struct Mode
+ {
+ 	Mode() : Mode(0, 0, 0, false) {}
+@@ -39,7 +36,7 @@ struct Mode
+ 
+ struct Options
+ {
+-	Options() : set_default_lens_position(false), af_on_capture(false), options_("Valid options are", 120, 80)
++	Options() : options_("Valid options are", 120, 80)
+ 	{
+ 		using namespace boost::program_options;
+ 		// clang-format off
+@@ -62,8 +59,7 @@ struct Options
+ 			 "Sets the information string on the titlebar. Available values:\n"
+ 			 "%frame (frame number)\n%fps (framerate)\n%exp (shutter speed)\n%ag (analogue gain)"
+ 			 "\n%dg (digital gain)\n%rg (red colour gain)\n%bg (blue colour gain)"
+-			 "\n%focus (focus FoM value)\n%aelock (AE locked status)"
+-			 "\n%lp (lens position, if known)\n%afstate (AF state, if supported)")
++			 "\n%focus (focus FoM value)\n%aelock (AE locked status)")
+ 			("width", value<unsigned int>(&width)->default_value(0),
+ 			 "Set the output image width (0 = use default value)")
+ 			("height", value<unsigned int>(&height)->default_value(0),
+@@ -116,7 +112,7 @@ struct Options
+ 			 "Adjust the colour saturation of the output, where 1.0 = normal and 0.0 = greyscale")
+ 			("sharpness", value<float>(&sharpness)->default_value(1.0),
+ 			 "Adjust the sharpness of the output image, where 1.0 = normal sharpening")
+-			("framerate", value<float>(&framerate_)->default_value(-1.0),
++			("framerate", value<float>(&framerate)->default_value(30.0),
+ 			 "Set the fixed framerate for preview and video modes")
+ 			("denoise", value<std::string>(&denoise)->default_value("auto"),
+ 			 "Sets the Denoise operating mode: auto, off, cdn_off, cdn_fast, cdn_hq")
+@@ -134,24 +130,15 @@ struct Options
+ 			 "Camera mode as W:H:bit-depth:packing, where packing is P (packed) or U (unpacked)")
+ 			("viewfinder-mode", value<std::string>(&viewfinder_mode_string),
+ 			 "Camera mode for preview as W:H:bit-depth:packing, where packing is P (packed) or U (unpacked)")
+-			("buffer-count", value<unsigned int>(&buffer_count)->default_value(0), "Number of in-flight requests (and buffers) configured for video, raw, and still.")
+-			("viewfinder-buffer-count", value<unsigned int>(&viewfinder_buffer_count)->default_value(0), "Number of in-flight requests (and buffers) configured for preview window.")
+-			("autofocus-mode", value<std::string>(&afMode)->default_value("default"),
+-			 "Control to set the mode of the AF (autofocus) algorithm.(manual, auto, continuous)")
+-			("autofocus-range", value<std::string>(&afRange)->default_value("normal"),
+-			 "Set the range of focus distances that is scanned.(normal, macro, full)")
+-			("autofocus-speed", value<std::string>(&afSpeed)->default_value("normal"),
+-			 "Control that determines whether the AF algorithm is to move the lens as quickly as possible or more steadily.(normal, fast)")
+-			("autofocus-window", value<std::string>(&afWindow)->default_value("0,0,0,0"),
+-			"Sets AfMetering to  AfMeteringWindows an set region used, e.g. 0.25,0.25,0.5,0.5")
+-			("lens-position", value<std::string>(&lens_position_)->default_value(""),
+-			 "Set the lens to a particular focus position, expressed as a reciprocal distance (0 moves the lens to infinity), or \"default\" for the hyperfocal distance")
+-			("hdr", value<bool>(&hdr)->default_value(false)->implicit_value(true),
+-			 "Enable (1) or disable (0) High Dynamic Range, where supported")
++			("autofocus", value<bool>(&autofocus)->default_value(false)->implicit_value(true), "Trigger Autofocus once.")
++			("continue-autofocus", value<bool>(&continue_autofocus)->default_value(false)->implicit_value(true), "Enable continue autofocus.")
+ 			("metadata", value<std::string>(&metadata),
+ 			 "Save captured image metadata to a file or \"-\" for stdout")
+ 			("metadata-format", value<std::string>(&metadata_format)->default_value("json"),
+ 			 "Format to save the metadata in, either txt or json (requires --metadata)")
++			("opencv-preview", value<bool>(&opencv_preview)->default_value(false)->implicit_value(true),
++			 "Use OpenCV preview window")
++			
+ 			;
+ 		// clang-format on
+ 	}
+@@ -189,18 +176,21 @@ struct Options
+ 	float awb_gain_r;
+ 	float awb_gain_b;
+ 	bool flush;
++	bool autofocus;
++	bool continue_autofocus;
+ 	unsigned int wrap;
+ 	float brightness;
+ 	float contrast;
+ 	float saturation;
+ 	float sharpness;
+-	std::optional<float> framerate;
++	float framerate;
+ 	std::string denoise;
+ 	std::string info_text;
+ 	unsigned int viewfinder_width;
+ 	unsigned int viewfinder_height;
+ 	std::string tuning_file;
+ 	bool qt_preview;
++	bool opencv_preview;
+ 	unsigned int lores_width;
+ 	unsigned int lores_height;
+ 	unsigned int camera;
+@@ -208,22 +198,8 @@ struct Options
+ 	Mode mode;
+ 	std::string viewfinder_mode_string;
+ 	Mode viewfinder_mode;
+-	unsigned int buffer_count;
+-	unsigned int viewfinder_buffer_count;
+-	std::string afMode;
+-	int afMode_index;
+-	std::string afRange;
+-	int afRange_index;
+-	std::string afSpeed;
+-	int afSpeed_index;
+-	std::string afWindow;
+-	float afWindow_x, afWindow_y, afWindow_width, afWindow_height;
+-	std::optional<float> lens_position;
+-	bool set_default_lens_position;
+-	bool af_on_capture;
+ 	std::string metadata;
+ 	std::string metadata_format;
+-	bool hdr;
+ 
+ 	virtual bool Parse(int argc, char *argv[]);
+ 	virtual void Print() const;
+@@ -235,6 +211,4 @@ private:
+ 	bool hflip_;
+ 	bool vflip_;
+ 	int rotation_;
+-	float framerate_;
+-	std::string lens_position_;
+ };
+diff --git a/core/still_options.hpp b/core/still_options.hpp
+index 96f5641..e2a73e4 100644
+--- a/core/still_options.hpp
++++ b/core/still_options.hpp
+@@ -46,8 +46,6 @@ struct StillOptions : public Options
+ 			 "Create a symbolic link with this name to most recent saved file")
+ 			("immediate", value<bool>(&immediate)->default_value(false)->implicit_value(true),
+ 			 "Perform first capture immediately, with no preview phase")
+-			("autofocus-on-capture", value<bool>(&af_on_capture)->default_value(false)->implicit_value(true),
+-			 "Switch to AfModeAuto and trigger a scan just before capturing a still")
+ 			;
+ 		// clang-format on
+ 	}
+@@ -110,7 +108,6 @@ struct StillOptions : public Options
+ 		std::cerr << "    thumbnail quality: " << thumb_quality << std::endl;
+ 		std::cerr << "    latest: " << latest << std::endl;
+ 		std::cerr << "    immediate " << immediate << std::endl;
+-		std::cerr << "    AF on capture: " << af_on_capture << std::endl;
+ 		for (auto &s : exif)
+ 			std::cerr << "    EXIF: " << s << std::endl;
+ 	}
+diff --git a/core/video_options.hpp b/core/video_options.hpp
+index 395d0a8..a3a13d3 100644
+--- a/core/video_options.hpp
++++ b/core/video_options.hpp
+@@ -68,14 +68,9 @@ struct VideoOptions : public Options
+ 			("audio-codec", value<std::string>(&audio_codec)->default_value("aac"),
+ 			 "Sets the libav audio codec to use.\n"
+ 			 "To list available codecs, run  the \"ffmpeg -codecs\" command.")
+-			("audio-source", value<std::string>(&audio_source)->default_value("pulse"),
+-			 "Audio source to record from. Valid options are \"pulse\" and \"alsa\"")
+ 			("audio-device", value<std::string>(&audio_device)->default_value("default"),
+-			 "Audio device to record from.  To list the available devices,\n"
+-			 "for pulseaudio, use the following command:\n"
+-			 "\"pactl list | grep -A2 'Source #' | grep 'Name: '\"\n"
+-			 "or for alsa, use the following command:\n"
+-			 "\"arecord -L\"")
++			 "Audio device to record from. To list the available devices, use the following command:\n"
++			 "pactl list | grep -A2 'Source #' | grep 'Name: '")
+ 			("audio-bitrate", value<uint32_t>(&audio_bitrate)->default_value(32768),
+ 			 "Set the audio bitrate for encoding, in bits/second.")
+ 			("audio-samplerate", value<uint32_t>(&audio_samplerate)->default_value(0),
+@@ -98,7 +93,6 @@ struct VideoOptions : public Options
+ 	bool libav_audio;
+ 	std::string audio_codec;
+ 	std::string audio_device;
+-	std::string audio_source;
+ 	uint32_t audio_bitrate;
+ 	uint32_t audio_samplerate;
+ 	int32_t av_sync;
+@@ -144,14 +138,6 @@ struct VideoOptions : public Options
+ 		if ((split || segment) && output.find('%') == std::string::npos)
+ 			LOG_ERROR("WARNING: expected % directive in output filename");
+ 
+-		// From https://en.wikipedia.org/wiki/Advanced_Video_Coding#Levels
+-		double mbps = ((width + 15) >> 4) * ((height + 15) >> 4) * framerate.value_or(DEFAULT_FRAMERATE);
+-		if ((codec == "h264" || codec == "libav") && mbps > 245760.0)
+-		{
+-			LOG(1, "Overriding H.264 level 4.2");
+-			level = "4.2";
+-		}
+-
+ 		return true;
+ 	}
+ 	virtual void Print() const override
+diff --git a/encoder/CMakeLists.txt b/encoder/CMakeLists.txt
+index a426a45..6091d3e 100644
+--- a/encoder/CMakeLists.txt
++++ b/encoder/CMakeLists.txt
+@@ -31,7 +31,6 @@ else()
+ endif()
+ 
+ add_library(encoders ${SRC})
+-set_target_properties(encoders PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+ target_link_libraries(encoders ${TARGET_LIBS})
+ target_compile_definitions(encoders PUBLIC LIBAV_PRESENT=${LIBAV_PRESENT})
+ 
+diff --git a/encoder/h264_encoder.cpp b/encoder/h264_encoder.cpp
+index 30a1b92..bd76464 100644
+--- a/encoder/h264_encoder.cpp
++++ b/encoder/h264_encoder.cpp
+@@ -131,16 +131,12 @@ H264Encoder::H264Encoder(VideoOptions const *options, StreamInfo const &info)
+ 	if (xioctl(fd_, VIDIOC_S_FMT, &fmt) < 0)
+ 		throw std::runtime_error("failed to set capture format");
+ 
+-	double frate = options->framerate.value_or(DEFAULT_FRAMERATE);
+-	if (frate > 0.0)
+-	{
+-		struct v4l2_streamparm parm = {};
+-		parm.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+-		parm.parm.output.timeperframe.numerator = 90000.0 / frate;
+-		parm.parm.output.timeperframe.denominator = 90000;
+-		if (xioctl(fd_, VIDIOC_S_PARM, &parm) < 0)
+-			throw std::runtime_error("failed to set streamparm");
+-	}
++	struct v4l2_streamparm parm = {};
++	parm.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
++	parm.parm.output.timeperframe.numerator = 1000 / options->framerate;
++	parm.parm.output.timeperframe.denominator = 1000;
++	if (xioctl(fd_, VIDIOC_S_PARM, &parm) < 0)
++		throw std::runtime_error("failed to set streamparm");
+ 
+ 	// Request that the necessary buffers are allocated. The output queue
+ 	// (input to the encoder) shares buffers from our caller, these must be
+diff --git a/encoder/libav_encoder.cpp b/encoder/libav_encoder.cpp
+index 0b6f216..d8fd10c 100644
+--- a/encoder/libav_encoder.cpp
++++ b/encoder/libav_encoder.cpp
+@@ -34,7 +34,7 @@ void LibAvEncoder::initVideoCodec(VideoOptions const *options, StreamInfo const
+ 	codec_ctx_[Video]->height = info.height;
+ 	// usec timebase
+ 	codec_ctx_[Video]->time_base = { 1, 1000 * 1000 };
+-	codec_ctx_[Video]->framerate = { (int)(options->framerate.value_or(DEFAULT_FRAMERATE) * 1000), 1000 };
++	codec_ctx_[Video]->framerate = { (int)(options->framerate * 1000), 1000 };
+ 	codec_ctx_[Video]->pix_fmt = AV_PIX_FMT_DRM_PRIME;
+ 	codec_ctx_[Video]->sw_pix_fmt = AV_PIX_FMT_YUV420P;
+ 
+@@ -129,7 +129,7 @@ void LibAvEncoder::initVideoCodec(VideoOptions const *options, StreamInfo const
+ 	// This seems to be a limitation/bug in ffmpeg:
+ 	// https://github.com/FFmpeg/FFmpeg/blob/3141dbb7adf1e2bd5b9ff700312d7732c958b8df/libavformat/avienc.c#L527
+ 	if (!strncmp(out_fmt_ctx_->oformat->name, "avi", 3))
+-		stream_[Video]->time_base = { 1000, (int)(options->framerate.value_or(DEFAULT_FRAMERATE) * 1000) };
++		stream_[Video]->time_base = { 1000, (int)(options->framerate * 1000) };
+ 	else
+ 		stream_[Video]->time_base = codec_ctx_[Video]->time_base;
+ 
+@@ -140,9 +140,9 @@ void LibAvEncoder::initVideoCodec(VideoOptions const *options, StreamInfo const
+ void LibAvEncoder::initAudioInCodec(VideoOptions const *options, StreamInfo const &info)
+ {
+ #if LIBAVUTIL_VERSION_MAJOR < 58
+-	AVInputFormat *input_fmt = (AVInputFormat *)av_find_input_format(options->audio_source.c_str());
++	AVInputFormat *input_fmt = (AVInputFormat *)av_find_input_format("pulse");
+ #else
+-	const AVInputFormat *input_fmt = (AVInputFormat *)av_find_input_format(options->audio_source.c_str());
++	const AVInputFormat *input_fmt = (AVInputFormat *)av_find_input_format("pulse");
+ #endif
+ 
+ 	assert(in_fmt_ctx_ == nullptr);
+@@ -186,14 +186,8 @@ void LibAvEncoder::initAudioOutCodec(VideoOptions const *options, StreamInfo con
+ 		throw std::runtime_error("libav: cannot allocate audio in context");
+ 
+ 	assert(stream_[AudioIn]);
+-
+-#if LIBAVUTIL_VERSION_MAJOR < 57
+ 	codec_ctx_[AudioOut]->channels = stream_[AudioIn]->codecpar->channels;
+ 	codec_ctx_[AudioOut]->channel_layout = av_get_default_channel_layout(stream_[AudioIn]->codecpar->channels);
+-#else
+-	av_channel_layout_default(&codec_ctx_[AudioOut]->ch_layout, stream_[AudioIn]->codecpar->ch_layout.nb_channels);
+-#endif
+-
+ 	codec_ctx_[AudioOut]->sample_rate = options->audio_samplerate ? options->audio_samplerate
+ 																  : stream_[AudioIn]->codecpar->sample_rate;
+ 	codec_ctx_[AudioOut]->sample_fmt = codec->sample_fmts[0];
+@@ -444,57 +438,31 @@ done:
+ 
+ void LibAvEncoder::audioThread()
+ {
+-	const AVSampleFormat required_fmt = codec_ctx_[AudioOut]->sample_fmt;
++	constexpr AVSampleFormat required_fmt = AV_SAMPLE_FMT_FLTP;
+ 	// Amount of time to pre-record audio into the fifo before the first video frame.
+ 	constexpr std::chrono::milliseconds pre_record_time(10);
+-	int ret;
+-
+-#if LIBAVUTIL_VERSION_MAJOR < 57
+-	uint32_t out_channels = codec_ctx_[AudioOut]->channels;
+-#else
+-	uint32_t out_channels = codec_ctx_[AudioOut]->ch_layout.nb_channels;
+-#endif
+ 
+ 	SwrContext *conv;
+ 	AVAudioFifo *fifo;
+ 
+-#if LIBAVUTIL_VERSION_MAJOR < 57
+-	conv = swr_alloc_set_opts(nullptr, av_get_default_channel_layout(codec_ctx_[AudioOut]->channels), required_fmt,
+-							  stream_[AudioOut]->codecpar->sample_rate,
++	conv = swr_alloc_set_opts(nullptr, av_get_default_channel_layout(codec_ctx_[AudioOut]->channels),
++							  required_fmt, stream_[AudioOut]->codecpar->sample_rate,
+ 							  av_get_default_channel_layout(codec_ctx_[AudioIn]->channels),
+-							  codec_ctx_[AudioIn]->sample_fmt, codec_ctx_[AudioIn]->sample_rate, 0, nullptr);
++							  (AVSampleFormat)stream_[AudioIn]->codecpar->format,
++							  stream_[AudioIn]->codecpar->sample_rate, 0, nullptr);
++	swr_init(conv);
+ 
+ 	// 2 seconds FIFO buffer
+ 	fifo = av_audio_fifo_alloc(required_fmt, codec_ctx_[AudioOut]->channels, codec_ctx_[AudioOut]->sample_rate * 2);
+-#else
+-	ret = swr_alloc_set_opts2(&conv, &codec_ctx_[AudioOut]->ch_layout, required_fmt,
+-							  stream_[AudioOut]->codecpar->sample_rate, &codec_ctx_[AudioIn]->ch_layout,
+-							  codec_ctx_[AudioIn]->sample_fmt, codec_ctx_[AudioIn]->sample_rate, 0, nullptr);
+-	if (ret < 0)
+-		throw std::runtime_error("libav: cannot create swr context");
+-
+-	// 2 seconds FIFO buffer
+-	fifo = av_audio_fifo_alloc(required_fmt, codec_ctx_[AudioOut]->ch_layout.nb_channels,
+-							   codec_ctx_[AudioOut]->sample_rate * 2);
+-#endif
+-
+-	swr_init(conv);
+ 
+ 	AVPacket *in_pkt = av_packet_alloc();
+ 	AVPacket *out_pkt = av_packet_alloc();
+ 	AVFrame *in_frame = av_frame_alloc();
+-	uint8_t **samples = nullptr;
+-	int sample_linesize = 0;
+-
+-	int max_output_samples = av_rescale_rnd(codec_ctx_[AudioOut]->frame_size, codec_ctx_[AudioOut]->sample_rate,
+-											codec_ctx_[AudioIn]->sample_rate, AV_ROUND_UP);
+-	ret = av_samples_alloc_array_and_samples(&samples, &sample_linesize, out_channels, max_output_samples, required_fmt,
+-											 0);
+-	if (ret < 0)
+-		throw std::runtime_error("libav: failed to alloc sample array");
+ 
+ 	while (!abort_audio_)
+ 	{
++		int ret;
++
+ 		// Audio In
+ 		ret = av_read_frame(in_fmt_ctx_, in_pkt);
+ 		if (ret < 0)
+@@ -509,22 +477,14 @@ void LibAvEncoder::audioThread()
+ 			throw std::runtime_error("libav: error getting decoded audio in frame");
+ 
+ 		// Audio Resample/Conversion
+-		int num_output_samples =
+-			av_rescale_rnd(swr_get_delay(conv, codec_ctx_[AudioIn]->sample_rate) + in_frame->nb_samples,
+-						   codec_ctx_[AudioOut]->sample_rate, codec_ctx_[AudioIn]->sample_rate, AV_ROUND_UP);
+-
+-		if (num_output_samples > max_output_samples)
+-		{
+-			av_freep(&samples[0]);
+-			max_output_samples = num_output_samples;
+-			ret = av_samples_alloc_array_and_samples(&samples, &sample_linesize, out_channels, max_output_samples,
+-													 required_fmt, 0);
+-			if (ret < 0)
+-				throw std::runtime_error("libav: failed to alloc sample array");
+-		}
++		uint8_t **samples = nullptr;
++		ret = av_samples_alloc_array_and_samples(&samples, NULL, codec_ctx_[AudioOut]->channels,
++												 codec_ctx_[AudioOut]->frame_size, required_fmt, 0);
++		if (ret < 0)
++			throw std::runtime_error("libav: failed to alloc sample array");
+ 
+-		ret = swr_convert(conv, samples, num_output_samples, (const uint8_t **)in_frame->extended_data,
+-						  in_frame->nb_samples);
++		ret = swr_convert(conv, samples, codec_ctx_[AudioOut]->frame_size,
++						  (const uint8_t **)in_frame->extended_data, in_frame->nb_samples);
+ 		if (ret < 0)
+ 			throw std::runtime_error("libav: swr_convert failed");
+ 
+@@ -538,18 +498,19 @@ void LibAvEncoder::audioThread()
+ 			// Number of pre-record samples rounded to the frame size.
+ 			unsigned int ps = !r ? ns : ns + codec_ctx_[AudioOut]->frame_size - r;
+ 			// FIFO size with samples from the next frame added.
+-			unsigned int fs = av_audio_fifo_size(fifo) + num_output_samples;
++			unsigned int fs = av_audio_fifo_size(fifo) + in_frame->nb_samples;
+ 			if (fs > ps)
+ 				av_audio_fifo_drain(fifo, fs - ps);
+ 		}
+ 
+-		if (av_audio_fifo_space(fifo) < num_output_samples)
++		if (av_audio_fifo_space(fifo) < in_frame->nb_samples)
+ 		{
+ 			LOG(1, "libav: Draining audio fifo, configure a larger size");
+-			av_audio_fifo_drain(fifo, num_output_samples);
++			av_audio_fifo_drain(fifo, in_frame->nb_samples);
+ 		}
+ 
+-		av_audio_fifo_write(fifo, (void **)samples, num_output_samples);
++		av_audio_fifo_write(fifo, (void **)samples, in_frame->nb_samples);
++		av_freep(&samples[0]);
+ 
+ 		av_frame_unref(in_frame);
+ 		av_packet_unref(in_pkt);
+@@ -563,14 +524,8 @@ void LibAvEncoder::audioThread()
+ 		{
+ 			AVFrame *out_frame = av_frame_alloc();
+ 			out_frame->nb_samples = codec_ctx_[AudioOut]->frame_size;
+-
+-#if LIBAVUTIL_VERSION_MAJOR < 57
+ 			out_frame->channels = codec_ctx_[AudioOut]->channels;
+ 			out_frame->channel_layout = av_get_default_channel_layout(codec_ctx_[AudioOut]->channels);
+-#else
+-			av_channel_layout_copy(&out_frame->ch_layout, &codec_ctx_[AudioOut]->ch_layout);
+-#endif
+-
+ 			out_frame->format = required_fmt;
+ 			out_frame->sample_rate = codec_ctx_[AudioOut]->sample_rate;
+ 
+@@ -597,7 +552,6 @@ void LibAvEncoder::audioThread()
+ 	encode(out_pkt, AudioOut);
+ 
+ 	swr_free(&conv);
+-	av_freep(&samples[0]);
+ 	av_audio_fifo_free(fifo);
+ 
+ 	av_packet_free(&in_pkt);
+diff --git a/encoder/null_encoder.cpp b/encoder/null_encoder.cpp
+index a80dc60..ebc3971 100644
+--- a/encoder/null_encoder.cpp
++++ b/encoder/null_encoder.cpp
+@@ -57,10 +57,7 @@ void NullEncoder::outputThread()
+ 					return;
+ 			}
+ 		}
+-		// Ensure the input done callback happens before the output ready callback.
+-		// This is needed as the metadata queue gets pushed in the former, and popped
+-		// in the latter.
+-		input_done_callback_(nullptr);
+ 		output_ready_callback_(item.mem, item.length, item.timestamp_us, true);
++		input_done_callback_(nullptr);
+ 	}
+ }
+diff --git a/image/CMakeLists.txt b/image/CMakeLists.txt
+index c451431..c4bf976 100644
+--- a/image/CMakeLists.txt
++++ b/image/CMakeLists.txt
+@@ -8,7 +8,6 @@ find_library(TIFF_LIBRARY tiff REQUIRED)
+ find_library(PNG_LIBRARY png REQUIRED)
+ 
+ add_library(images bmp.cpp yuv.cpp jpeg.cpp png.cpp dng.cpp)
+-set_target_properties(images PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+ target_link_libraries(images jpeg exif png tiff)
+ 
+ install(TARGETS images LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+diff --git a/image/dng.cpp b/image/dng.cpp
+index 5bd6baf..d627b66 100644
+--- a/image/dng.cpp
++++ b/image/dng.cpp
+@@ -5,7 +5,6 @@
+  * dng.cpp - Save raw image as DNG file.
+  */
+ 
+-#include <limits>
+ #include <map>
+ 
+ #include <libcamera/control_ids.h>
+@@ -16,10 +15,6 @@
+ #include "core/still_options.hpp"
+ #include "core/stream_info.hpp"
+ 
+-#ifndef MAKE_STRING
+-#define MAKE_STRING "Raspberry Pi"
+-#endif
+-
+ using namespace libcamera;
+ 
+ static char TIFF_RGGB[4] = { 0, 1, 1, 2 };
+@@ -131,8 +126,9 @@ Matrix(float m0, float m1, float m2,
+ 	}
+ };
+ 
+-void dng_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const &info, ControlList const &metadata,
+-			  std::string const &filename, std::string const &cam_model, StillOptions const *options)
++void dng_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const &info,
++			  ControlList const &metadata, std::string const &filename,
++			  std::string const &cam_name, StillOptions const *options)
+ {
+ 	// Check the Bayer format and unpack it to u16.
+ 
+@@ -228,7 +224,6 @@ void dng_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const
+ 		const short cfa_repeat_pattern_dim[] = { 2, 2 };
+ 		uint32_t white = (1 << bayer_format.bits) - 1;
+ 		toff_t offset_subifd = 0, offset_exififd = 0;
+-		std::string unique_model = std::string(MAKE_STRING " ") + cam_model;
+ 
+ 		tif = TIFFOpen(filename.c_str(), "w");
+ 		if (!tif)
+@@ -242,11 +237,11 @@ void dng_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const
+ 		TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, 8);
+ 		TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
+ 		TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+-		TIFFSetField(tif, TIFFTAG_MAKE, MAKE_STRING);
+-		TIFFSetField(tif, TIFFTAG_MODEL, cam_model.c_str());
++		TIFFSetField(tif, TIFFTAG_MAKE, "Raspberry Pi");
++		TIFFSetField(tif, TIFFTAG_MODEL, cam_name.c_str());
+ 		TIFFSetField(tif, TIFFTAG_DNGVERSION, "\001\001\000\000");
+ 		TIFFSetField(tif, TIFFTAG_DNGBACKWARDVERSION, "\001\000\000\000");
+-		TIFFSetField(tif, TIFFTAG_UNIQUECAMERAMODEL, unique_model.c_str());
++		TIFFSetField(tif, TIFFTAG_UNIQUECAMERAMODEL, cam_name.c_str());
+ 		TIFFSetField(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+ 		TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, 3);
+ 		TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+@@ -319,13 +314,6 @@ void dng_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const
+ 		TIFFSetField(tif, EXIFTAG_ISOSPEEDRATINGS, 1, &iso);
+ 		TIFFSetField(tif, EXIFTAG_EXPOSURETIME, exp_time);
+ 
+-		auto lp = metadata.get(libcamera::controls::LensPosition);
+-		if (lp)
+-		{
+-			double dist = (*lp > 0.0) ? (1.0 / *lp) : std::numeric_limits<double>::infinity();
+-			TIFFSetField(tif, EXIFTAG_SUBJECTDISTANCE, dist);
+-		}
+-
+ 		TIFFCheckpointDirectory(tif);
+ 		offset_exififd = TIFFCurrentDirOffset(tif);
+ 		TIFFWriteDirectory(tif);
+diff --git a/image/image.hpp b/image/image.hpp
+index bef14fb..cc24d19 100644
+--- a/image/image.hpp
++++ b/image/image.hpp
+@@ -19,7 +19,7 @@ struct StillOptions;
+ 
+ // In jpeg.cpp:
+ void jpeg_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const &info,
+-			   libcamera::ControlList const &metadata, std::string const &filename, std::string const &cam_model,
++			   libcamera::ControlList const &metadata, std::string const &filename, std::string const &cam_name,
+ 			   StillOptions const *options);
+ 
+ // In yuv.cpp:
+@@ -28,7 +28,7 @@ void yuv_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const
+ 
+ // In dng.cpp:
+ void dng_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const &info,
+-			  libcamera::ControlList const &metadata, std::string const &filename, std::string const &cam_model,
++			  libcamera::ControlList const &metadata, std::string const &filename, std::string const &cam_name,
+ 			  StillOptions const *options);
+ 
+ // In png.cpp:
+diff --git a/image/jpeg.cpp b/image/jpeg.cpp
+index e3516ef..cf63e27 100644
+--- a/image/jpeg.cpp
++++ b/image/jpeg.cpp
+@@ -23,10 +23,6 @@
+ #include "core/still_options.hpp"
+ #include "core/stream_info.hpp"
+ 
+-#ifndef MAKE_STRING
+-#define MAKE_STRING "Raspberry Pi"
+-#endif
+-
+ #if JPEG_LIB_VERSION_MAJOR > 9 || (JPEG_LIB_VERSION_MAJOR == 9 && JPEG_LIB_VERSION_MINOR >= 4)
+ typedef size_t jpeg_mem_len_t;
+ #else
+@@ -423,21 +419,24 @@ static void YUV420_to_JPEG(const uint8_t *input, StreamInfo const &info,
+ 	jpeg_destroy_compress(&cinfo);
+ }
+ 
+-static void YUV_to_JPEG(const uint8_t *input, StreamInfo const &info, const int output_width, const int output_height,
+-						const int quality, const unsigned int restart, uint8_t *&jpeg_buffer, jpeg_mem_len_t &jpeg_len)
++static void YUV_to_JPEG(const uint8_t *input, StreamInfo const &info,
++						const int output_width, const int output_height, const int quality,
++						const unsigned int restart, uint8_t *&jpeg_buffer, jpeg_mem_len_t &jpeg_len)
+ {
+ 	if (info.pixel_format == libcamera::formats::YUYV)
+-		YUYV_to_JPEG(input, info, output_width, output_height, quality, restart, jpeg_buffer, jpeg_len);
++		YUYV_to_JPEG(input, info, output_width, output_height, quality, restart,
++					 jpeg_buffer, jpeg_len);
+ 	else if (info.pixel_format == libcamera::formats::YUV420)
+-		YUV420_to_JPEG(input, info, output_width, output_height, quality, restart, jpeg_buffer, jpeg_len);
++		YUV420_to_JPEG(input, info, output_width, output_height, quality, restart,
++					   jpeg_buffer, jpeg_len);
+ 	else
+ 		throw std::runtime_error("unsupported YUV format in JPEG encode");
+ }
+ 
+-static void create_exif_data(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const &info,
+-							 ControlList const &metadata, std::string const &cam_model, StillOptions const *options,
+-							 uint8_t *&exif_buffer, unsigned int &exif_len, uint8_t *&thumb_buffer,
+-							 jpeg_mem_len_t &thumb_len)
++static void create_exif_data(std::vector<libcamera::Span<uint8_t>> const &mem,
++							 StreamInfo const &info, ControlList const &metadata, std::string const &cam_name,
++							 StillOptions const *options, uint8_t *&exif_buffer, unsigned int &exif_len,
++							 uint8_t *&thumb_buffer, jpeg_mem_len_t &thumb_len)
+ {
+ 	exif_buffer = nullptr;
+ 	ExifData *exif = nullptr;
+@@ -452,9 +451,9 @@ static void create_exif_data(std::vector<libcamera::Span<uint8_t>> const &mem, S
+ 		// First add some fixed EXIF tags.
+ 
+ 		ExifEntry *entry = exif_create_tag(exif, EXIF_IFD_EXIF, EXIF_TAG_MAKE);
+-		exif_set_string(entry, MAKE_STRING);
++		exif_set_string(entry, "Raspberry Pi");
+ 		entry = exif_create_tag(exif, EXIF_IFD_EXIF, EXIF_TAG_MODEL);
+-		exif_set_string(entry, cam_model.c_str());
++		exif_set_string(entry, cam_name.c_str());
+ 		entry = exif_create_tag(exif, EXIF_IFD_EXIF, EXIF_TAG_SOFTWARE);
+ 		exif_set_string(entry, "libcamera-apps");
+ 		entry = exif_create_tag(exif, EXIF_IFD_EXIF, EXIF_TAG_DATE_TIME);
+@@ -489,13 +488,6 @@ static void create_exif_data(std::vector<libcamera::Span<uint8_t>> const &mem, S
+ 			LOG(2, "Ag " << *ag << " Dg " << *dg << " Total " << gain);
+ 			exif_set_short(entry->data, exif_byte_order, 100 * gain);
+ 		}
+-		auto lp = metadata.get(libcamera::controls::LensPosition);
+-		if (lp)
+-		{
+-			entry = exif_create_tag(exif, EXIF_IFD_EXIF, EXIF_TAG_SUBJECT_DISTANCE);
+-			ExifRational dist = { 1000, (ExifLong)(1000.0 * *lp) };
+-			exif_set_rational(entry->data, exif_byte_order, dist);
+-		}
+ 
+ 		// Command-line supplied tags.
+ 		for (auto &exif_item : options->exif)
+@@ -570,8 +562,9 @@ static void create_exif_data(std::vector<libcamera::Span<uint8_t>> const &mem, S
+ 	}
+ }
+ 
+-void jpeg_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const &info, ControlList const &metadata,
+-			   std::string const &filename, std::string const &cam_model, StillOptions const *options)
++void jpeg_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo const &info,
++			   ControlList const &metadata, std::string const &filename,
++			   std::string const &cam_name, StillOptions const *options)
+ {
+ 	FILE *fp = nullptr;
+ 	uint8_t *thumb_buffer = nullptr;
+@@ -589,14 +582,15 @@ void jpeg_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInfo cons
+ 
+ 		jpeg_mem_len_t thumb_len = 0; // stays zero if no thumbnail
+ 		unsigned int exif_len;
+-		create_exif_data(mem, info, metadata, cam_model, options, exif_buffer, exif_len, thumb_buffer, thumb_len);
++		create_exif_data(mem, info, metadata, cam_name, options, exif_buffer, exif_len,
++						 thumb_buffer, thumb_len);
+ 
+ 		// Make the full size JPEG (could probably be more efficient if we had
+ 		// YUV422 or YUV420 planar format).
+ 
+ 		jpeg_mem_len_t jpeg_len;
+-		YUV_to_JPEG((uint8_t *)(mem[0].data()), info, info.width, info.height, options->quality, options->restart,
+-					jpeg_buffer, jpeg_len);
++		YUV_to_JPEG((uint8_t *)(mem[0].data()), info, info.width, info.height, options->quality,
++					options->restart, jpeg_buffer, jpeg_len);
+ 		LOG(2, "JPEG size is " << jpeg_len);
+ 
+ 		// Write everything out.
+diff --git a/image/yuv.cpp b/image/yuv.cpp
+index 7f03a5f..de01244 100644
+--- a/image/yuv.cpp
++++ b/image/yuv.cpp
+@@ -20,7 +20,7 @@ static void yuv420_save(std::vector<libcamera::Span<uint8_t>> const &mem, Stream
+ 			throw std::runtime_error("both width and height must be even");
+ 		if (mem.size() != 1)
+ 			throw std::runtime_error("incorrect number of planes in YUV420 data");
+-		FILE *fp = filename == "-" ? stdout : fopen(filename.c_str(), "w");
++		FILE *fp = fopen(filename.c_str(), "w");
+ 		if (!fp)
+ 			throw std::runtime_error("failed to open file " + filename);
+ 		try
+@@ -44,13 +44,10 @@ static void yuv420_save(std::vector<libcamera::Span<uint8_t>> const &mem, Stream
+ 				if (fwrite(V + j * stride, w, 1, fp) != 1)
+ 					throw std::runtime_error("failed to write file " + filename);
+ 			}
+-			if (fp != stdout)
+-				fclose(fp);
+ 		}
+ 		catch (std::exception const &e)
+ 		{
+-			if (fp != stdout)
+-				fclose(fp);
++			fclose(fp);
+ 			throw;
+ 		}
+ 	}
+@@ -65,8 +62,7 @@ static void yuyv_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamIn
+ 	{
+ 		if ((info.width & 1) || (info.height & 1))
+ 			throw std::runtime_error("both width and height must be even");
+-
+-		FILE *fp = filename == "-" ? stdout : fopen(filename.c_str(), "w");
++		FILE *fp = fopen(filename.c_str(), "w");
+ 		if (!fp)
+ 			throw std::runtime_error("failed to open file " + filename);
+ 		try
+@@ -98,13 +94,11 @@ static void yuyv_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamIn
+ 				if (fwrite(&row[0], info.width / 2, 1, fp) != 1)
+ 					throw std::runtime_error("failed to write file " + filename);
+ 			}
+-			if (fp != stdout)
+-				fclose(fp);
++			fclose(fp);
+ 		}
+ 		catch (std::exception const &e)
+ 		{
+-			if (fp != stdout)
+-				fclose(fp);
++			fclose(fp);
+ 			throw;
+ 		}
+ 	}
+@@ -117,7 +111,7 @@ static void rgb_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInf
+ {
+ 	if (options->encoding != "rgb")
+ 		throw std::runtime_error("encoding should be set to rgb");
+-	FILE *fp = filename == "-" ? stdout : fopen(filename.c_str(), "w");
++	FILE *fp = fopen(filename.c_str(), "w");
+ 	if (!fp)
+ 		throw std::runtime_error("failed to open file " + filename);
+ 	try
+@@ -128,13 +122,11 @@ static void rgb_save(std::vector<libcamera::Span<uint8_t>> const &mem, StreamInf
+ 			if (fwrite(ptr, 3 * info.width, 1, fp) != 1)
+ 				throw std::runtime_error("failed to write file " + filename);
+ 		}
+-		if (fp != stdout)
+-			fclose(fp);
++		fclose(fp);
+ 	}
+ 	catch (std::exception const &e)
+ 	{
+-		if (fp != stdout)
+-			fclose(fp);
++		fclose(fp);
+ 		throw;
+ 	}
+ }
+diff --git a/output/CMakeLists.txt b/output/CMakeLists.txt
+index fe8bdbe..1b2f026 100644
+--- a/output/CMakeLists.txt
++++ b/output/CMakeLists.txt
+@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.6)
+ include(GNUInstallDirs)
+ 
+ add_library(outputs output.cpp file_output.cpp net_output.cpp circular_output.cpp)
+-set_target_properties(outputs PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+ 
+ install(TARGETS outputs LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ 
+diff --git a/post_processing_stages/CMakeLists.txt b/post_processing_stages/CMakeLists.txt
+index 55d3c35..99745f8 100644
+--- a/post_processing_stages/CMakeLists.txt
++++ b/post_processing_stages/CMakeLists.txt
+@@ -49,7 +49,6 @@ else()
+ endif()
+ 
+ add_library(post_processing_stages ${SRC})
+-set_target_properties(post_processing_stages PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+ target_link_libraries(post_processing_stages ${TARGET_LIBS})
+ target_compile_definitions(post_processing_stages PUBLIC OPENCV_PRESENT=${OpenCV_FOUND})
+ 
+diff --git a/post_processing_stages/hdr_stage.cpp b/post_processing_stages/hdr_stage.cpp
+index 11e4fa8..2a5675c 100644
+--- a/post_processing_stages/hdr_stage.cpp
++++ b/post_processing_stages/hdr_stage.cpp
+@@ -491,7 +491,7 @@ bool HdrStage::Process(CompletedRequestPtr &completed_request)
+ 		filename[sizeof(filename) - 1] = 0;
+ 		StillOptions const *options = dynamic_cast<StillOptions *>(app_->GetOptions());
+ 		if (options)
+-			jpeg_save(buffers, info_, completed_request->metadata, filename, app_->CameraModel(), options);
++			jpeg_save(buffers, info_, completed_request->metadata, filename, app_->CameraId(), options);
+ 		else
+ 			LOG(1, "No still options - unable to save JPEG");
+ 	}
+diff --git a/preview/CMakeLists.txt b/preview/CMakeLists.txt
+index 24ea35a..44f2de3 100644
+--- a/preview/CMakeLists.txt
++++ b/preview/CMakeLists.txt
+@@ -63,13 +63,33 @@ else()
+     message(STATUS "QT display mode will be unavailable!")
+ endif()
+ 
++if (NOT DEFINED ENABLE_OPENCV)
++    message(STATUS " ENABLE_OPENCV not spedicfied - set to 1")
++    set(ENABLE_OPENCV 1)
++endif()
++set(OpenCV_FOUND 0)
++if (ENABLE_OPENCV)
++    find_package(OpenCV QUIET)
++endif()
++if (OpenCV_FOUND)
++    message(STATUS "    OPENCV_LINK_LIBRARIES=${OpenCV_LIBS}")
++    message(STATUS "    OPENCV_INCLUDE_DIRS=${OpenCV_INCLUDE_DIRS}")
++
++    include_directories({OpenCV_INCLUDE_DIRS})
++    set(TARGET_LIBS ${TARGET_LIBS} ${OpenCV_LIBS})
++
++    set(SRC ${SRC} opencv_preview.cpp)
++    message (STATUS "OpenCV display mode will be enabled")
++else ()
++    message(STATUS "OpenCV display mode will be unavailable!")
++endif()
++
+ add_library(preview null_preview.cpp ${SRC})
+-set_target_properties(preview PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+ target_link_libraries(preview ${TARGET_LIBS})
+ 
+ target_compile_definitions(preview PUBLIC LIBDRM_PRESENT=${DRM_FOUND})
+ target_compile_definitions(preview PUBLIC LIBEGL_PRESENT=${EGL_FOUND})
+ target_compile_definitions(preview PUBLIC QT_PRESENT=${QT_FOUND})
++target_compile_definitions(preview PUBLIC OPENCV_PRESENT=${OpenCV_FOUND})
+ 
+-install(TARGETS preview LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+-
++install(TARGETS preview LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+\ No newline at end of file
+diff --git a/preview/null_preview.cpp b/preview/null_preview.cpp
+index bdd418d..d71b71c 100644
+--- a/preview/null_preview.cpp
++++ b/preview/null_preview.cpp
+@@ -25,8 +25,6 @@ public:
+ 	// Return the maximum image size allowed. Zeroes mean "no limit".
+ 	virtual void MaxImageSize(unsigned int &w, unsigned int &h) const override { w = h = 0; }
+ 
+-	void SetInfoText(const std::string &text) override { LOG(1, text); }
+-
+ private:
+ };
+ 
+diff --git a/preview/opencv_preview.cpp b/preview/opencv_preview.cpp
+new file mode 100644
+index 0000000..57ec7bd
+--- /dev/null
++++ b/preview/opencv_preview.cpp
+@@ -0,0 +1,173 @@
++#include <opencv4/opencv2/opencv.hpp>
++#include <atomic>
++#include <condition_variable>
++#include <thread>
++#include <chrono>
++
++#include "core/options.hpp"
++#include "preview.hpp"
++
++#define WINDOW_NAME "preview"
++
++using namespace cv;
++using namespace std::chrono_literals;
++
++class OpencvPreview : public Preview
++{
++    public:
++        OpencvPreview(Options const *options) : Preview(options), img()
++        {
++            namedWindow(WINDOW_NAME, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
++            window_width = options->preview_width;
++            window_height = options->preview_height;
++
++            img = Mat(window_height, window_width, CV_8UC3);
++
++            thread_ = std::thread(&OpencvPreview::threadFunc, this, options);
++        }
++
++        virtual ~OpencvPreview() override
++        {
++            th_run = false;
++            thread_.join();
++        }
++
++        virtual void Reset() override {}
++
++        virtual bool Quit() override
++        {
++            if (getWindowProperty(WINDOW_NAME, WND_PROP_VISIBLE) < 1)
++                return false;
++
++            return true;
++        }
++
++        virtual void MaxImageSize(unsigned int &w, unsigned int &h) const override { w = h = 0; }
++
++        virtual void Show(int fd, libcamera::Span<uint8_t> span, StreamInfo const &info) override
++        {
++            // Cache the x sampling locations for speed. This is a quick nearest neighbour resize.
++            if (last_image_width_ != info.width)
++            {
++                last_image_width_ = info.width;
++                x_locations_.resize(window_width);
++                for (unsigned int i = 0; i < window_width; i++)
++                    x_locations_[i] = (i * (info.width - 1) + (window_width - 1) / 2) / (window_width - 1);
++            }
++
++            uint8_t *Y_start = span.data();
++            uint8_t *U_start = Y_start + info.stride * info.height;
++            int uv_size = (info.stride / 2) * (info.height / 2);
++            uint8_t *dest = img.data;
++
++            // Choose the right matrix to convert YUV back to RGB.
++            static const float YUV2RGB[3][9] = {
++                { 1.0,   0.0, 1.402, 1.0,   -0.344, -0.714, 1.0,   1.772, 0.0 }, // JPEG
++                { 1.164, 0.0, 1.596, 1.164, -0.392, -0.813, 1.164, 2.017, 0.0 }, // SMPTE170M
++                { 1.164, 0.0, 1.793, 1.164, -0.213, -0.533, 1.164, 2.112, 0.0 }, // Rec709
++            };
++            const float *M = YUV2RGB[0];
++            if (info.colour_space == libcamera::ColorSpace::Sycc)
++                M = YUV2RGB[0];
++            else if (info.colour_space == libcamera::ColorSpace::Smpte170m)
++                M = YUV2RGB[1];
++            else if (info.colour_space == libcamera::ColorSpace::Rec709)
++                M = YUV2RGB[2];
++            else
++                LOG(1, "QtPreview: unexpected colour space " << libcamera::ColorSpace::toString(info.colour_space));
++
++            // Possibly this should be locked in case a repaint is happening? In practice the risk
++            // is only that there might be some tearing, so I don't think we worry. We could speed
++            // it up by getting the ISP to supply RGB, but I'm not sure I want to handle that extra
++            // possibility in our main application code, so we'll put up with the slow conversion.
++            for (unsigned int y = 0; y < window_height; y++)
++            {
++                int row = (y * (info.height - 1) + (window_height - 1) / 2) / (window_height - 1);
++                uint8_t *Y_row = Y_start + row * info.stride;
++                uint8_t *U_row = U_start + (row / 2) * (info.stride / 2);
++                uint8_t *V_row = U_row + uv_size;
++                for (unsigned int x = 0; x < window_width;)
++                {
++                    int y_off0 = x_locations_[x++];
++                    int y_off1 = x_locations_[x++];
++                    int uv_off0 = y_off0 >> 1;
++                    int uv_off1 = y_off0 >> 1;
++                    int Y0 = Y_row[y_off0];
++                    int Y1 = Y_row[y_off1];
++                    int U0 = U_row[uv_off0];
++                    int V0 = V_row[uv_off0];
++                    int U1 = U_row[uv_off1];
++                    int V1 = V_row[uv_off1];
++                    U0 -= 128;
++                    V0 -= 128;
++                    U1 -= 128;
++                    V1 -= 128;
++                    int R0 = M[0] * Y0 + M[2] * V0;
++                    int G0 = M[3] * Y0 + M[4] * U0 + M[5] * V0;
++                    int B0 = M[6] * Y0 + M[7] * U0;
++                    int R1 = M[0] * Y1 + M[2] * V1;
++                    int G1 = M[3] * Y1 + M[4] * U1 + M[5] * V1;
++                    int B1 = M[6] * Y1 + M[7] * U1;
++                    *(dest++) = std::clamp(B0, 0, 255);
++                    *(dest++) = std::clamp(G0, 0, 255);
++                    *(dest++) = std::clamp(R0, 0, 255);
++                    *(dest++) = std::clamp(B1, 0, 255);
++                    *(dest++) = std::clamp(G1, 0, 255);
++                    *(dest++) = std::clamp(R1, 0, 255);
++                }
++            }
++
++            data_ready.notify_one();
++            done_callback_(fd);
++        }
++
++        virtual void SetInfoText(const std::string &text) override
++        {
++            std::unique_lock<std::mutex> lck(mutex);
++            title = text;
++        }
++
++    private:
++        unsigned int window_width, window_height;
++        unsigned int last_image_width_ = 0;
++        std::atomic_bool th_run = true;
++        std::condition_variable data_ready;
++        std::vector<uint16_t> x_locations_;
++        std::mutex mutex;
++        std::thread thread_;
++        std::string title;
++        Mat img;
++
++        void threadFunc(Options const *options)
++        {
++            std::mutex m;
++            unsigned int radius = 100, thickness = 1, x = window_width / 2, y = window_height / 2;
++            Point center(x, y);
++            Point p1(x - radius, y);
++            Point p2(x + radius, y);
++            Point p3(x, y - radius);
++            Point p4(x, y + radius);
++            Scalar color(0, 0, 255);
++
++            resizeWindow(WINDOW_NAME, window_width, window_height);
++            setWindowTitle(WINDOW_NAME, "Ardcam 64 MP preview (" + std::to_string(options->viewfinder_width) + 
++            " x " + std::to_string(options->viewfinder_height) + ")");
++
++            while(th_run)
++            {
++                std::unique_lock lk(m);
++                if (data_ready.wait_for(lk, 200ms) != std::cv_status::timeout) {
++                    circle(img, center, radius, color, thickness);
++                    line(img, p1, p2, color, thickness);
++                    line(img, p3, p4, color, thickness);
++                    imshow(WINDOW_NAME, img);
++                    waitKey(1);
++                }
++            }
++        }
++};
++
++Preview *make_opencv_preview(Options const *options)
++{
++    return new OpencvPreview(options);
++}
+\ No newline at end of file
+diff --git a/preview/preview.cpp b/preview/preview.cpp
+index b67edb3..6bce7b7 100644
+--- a/preview/preview.cpp
++++ b/preview/preview.cpp
+@@ -13,6 +13,7 @@ Preview *make_null_preview(Options const *options);
+ Preview *make_egl_preview(Options const *options);
+ Preview *make_drm_preview(Options const *options);
+ Preview *make_qt_preview(Options const *options);
++Preview *make_opencv_preview(Options const *options);
+ 
+ Preview *make_preview(Options const *options)
+ {
+@@ -26,6 +27,15 @@ Preview *make_preview(Options const *options)
+ 			LOG(1, "Made QT preview window");
+ 		return p;
+ 	}
++#endif
++#if OPENCV_PRESENT
++	else if (options->opencv_preview)
++	{
++		Preview *p = make_opencv_preview(options);
++		if (p)
++			LOG(1, "Made OpenCV preview window");
++		return p;
++	}
+ #endif
+ 	else
+ 	{
+diff --git a/preview/qt_preview.cpp b/preview/qt_preview.cpp
+index f595db7..1014654 100644
+--- a/preview/qt_preview.cpp
++++ b/preview/qt_preview.cpp
+@@ -8,7 +8,6 @@
+ #include <condition_variable>
+ #include <iostream>
+ #include <mutex>
+-#include <string.h>
+ #include <thread>
+ 
+ // This header must be before the QT headers, as the latter #defines slot and emit!
+@@ -67,8 +66,6 @@ public:
+ 		// This preview window is expensive, so make it small by default.
+ 		if (window_width_ == 0 || window_height_ == 0)
+ 			window_width_ = 512, window_height_ = 384;
+-		// As a hint, reserve twice the binned width for our widest current camera (V3)
+-		tmp_stripe_.reserve(4608);
+ 		thread_ = std::thread(&QtPreview::threadFunc, this, options);
+ 		std::unique_lock lock(mutex_);
+ 		while (!pane_)
+@@ -83,11 +80,19 @@ public:
+ 	void SetInfoText(const std::string &text) override { main_window_->setWindowTitle(QString::fromStdString(text)); }
+ 	virtual void Show(int fd, libcamera::Span<uint8_t> span, StreamInfo const &info) override
+ 	{
+-		// Quick and simple nearest-neighbour-ish resampling is used here.
+-		// We further share U,V samples between adjacent output pixel pairs
+-		// (even when downscaling) to speed up the conversion.
+-		unsigned x_step = (info.width << 16) / window_width_;
+-		unsigned y_step = (info.height << 16) / window_height_;
++		// Cache the x sampling locations for speed. This is a quick nearest neighbour resize.
++		if (last_image_width_ != info.width)
++		{
++			last_image_width_ = info.width;
++			x_locations_.resize(window_width_);
++			for (unsigned int i = 0; i < window_width_; i++)
++				x_locations_[i] = (i * (info.width - 1) + (window_width_ - 1) / 2) / (window_width_ - 1);
++		}
++
++		uint8_t *Y_start = span.data();
++		uint8_t *U_start = Y_start + info.stride * info.height;
++		int uv_size = (info.stride / 2) * (info.height / 2);
++		uint8_t *dest = pane_->image.bits();
+ 
+ 		// Choose the right matrix to convert YUV back to RGB.
+ 		static const float YUV2RGB[3][9] = {
+@@ -95,45 +100,15 @@ public:
+ 			{ 1.164, 0.0, 1.596, 1.164, -0.392, -0.813, 1.164, 2.017, 0.0 }, // SMPTE170M
+ 			{ 1.164, 0.0, 1.793, 1.164, -0.213, -0.533, 1.164, 2.112, 0.0 }, // Rec709
+ 		};
+-		int offsetY;
+-		float coeffY, coeffVR, coeffUG, coeffVG, coeffUB;
+-		if (info.colour_space == libcamera::ColorSpace::Smpte170m)
+-		{
+-			offsetY = 16;
+-			coeffY = YUV2RGB[1][0];
+-			coeffVR = YUV2RGB[1][2];
+-			coeffUG = YUV2RGB[1][4];
+-			coeffVG = YUV2RGB[1][5];
+-			coeffUB = YUV2RGB[1][7];
+-		}
++		const float *M = YUV2RGB[0];
++		if (info.colour_space == libcamera::ColorSpace::Sycc)
++			M = YUV2RGB[0];
++		else if (info.colour_space == libcamera::ColorSpace::Smpte170m)
++			M = YUV2RGB[1];
+ 		else if (info.colour_space == libcamera::ColorSpace::Rec709)
+-		{
+-			offsetY = 16;
+-			coeffY = YUV2RGB[2][0];
+-			coeffVR = YUV2RGB[2][2];
+-			coeffUG = YUV2RGB[2][4];
+-			coeffVG = YUV2RGB[2][5];
+-			coeffUB = YUV2RGB[2][7];
+-		}
++			M = YUV2RGB[2];
+ 		else
+-		{
+-			offsetY = 0;
+-			coeffY = YUV2RGB[0][0];
+-			coeffVR = YUV2RGB[0][2];
+-			coeffUG = YUV2RGB[0][4];
+-			coeffVG = YUV2RGB[0][5];
+-			coeffUB = YUV2RGB[0][7];
+-			if (info.colour_space != libcamera::ColorSpace::Sycc)
+-				LOG(1, "QtPreview: unexpected colour space " << libcamera::ColorSpace::toString(info.colour_space));
+-		}
+-
+-		// Because the source buffer is uncached, and we want to read it a byte at a time,
+-		// take a copy of each row used. This is a speedup provided memcpy() is vectorized.
+-		tmp_stripe_.resize(2 * info.stride);
+-		uint8_t const *Y_start = span.data();
+-		uint8_t *Y_row = &tmp_stripe_[0];
+-		uint8_t *U_row = Y_row + info.stride;
+-		uint8_t *V_row = U_row + (info.stride >> 1);
++			LOG(1, "QtPreview: unexpected colour space " << libcamera::ColorSpace::toString(info.colour_space));
+ 
+ 		// Possibly this should be locked in case a repaint is happening? In practice the risk
+ 		// is only that there might be some tearing, so I don't think we worry. We could speed
+@@ -141,32 +116,32 @@ public:
+ 		// possibility in our main application code, so we'll put up with the slow conversion.
+ 		for (unsigned int y = 0; y < window_height_; y++)
+ 		{
+-			unsigned row = (y * y_step) >> 16;
+-			uint8_t *dest = pane_->image.scanLine(y);
+-			unsigned x_pos = x_step >> 1;
+-
+-			memcpy(Y_row, Y_start + row * info.stride, info.stride);
+-			memcpy(U_row, Y_start + ((4 * info.height + row) >> 1) * (info.stride >> 1), info.stride >> 1);
+-			memcpy(V_row, Y_start + ((5 * info.height + row) >> 1) * (info.stride >> 1), info.stride >> 1);
+-
+-			for (unsigned int x = 0; x < window_width_; x += 2)
++			int row = (y * (info.height - 1) + (window_height_ - 1) / 2) / (window_height_ - 1);
++			uint8_t *Y_row = Y_start + row * info.stride;
++			uint8_t *U_row = U_start + (row / 2) * (info.stride / 2);
++			uint8_t *V_row = U_row + uv_size;
++			for (unsigned int x = 0; x < window_width_;)
+ 			{
+-				int Y0 = Y_row[x_pos >> 16];
+-				x_pos += x_step;
+-				int Y1 = Y_row[x_pos >> 16];
+-				int U = U_row[x_pos >> 17];
+-				int V = V_row[x_pos >> 17];
+-				x_pos += x_step;
+-				Y0 -= offsetY;
+-				Y1 -= offsetY;
+-				U -= 128;
+-				V -= 128;
+-				int R0 = coeffY * Y0 + coeffVR * V;
+-				int G0 = coeffY * Y0 + coeffUG * U + coeffVG * V;
+-				int B0 = coeffY * Y0 + coeffUB * U;
+-				int R1 = coeffY * Y1 + coeffVR * V;
+-				int G1 = coeffY * Y1 + coeffUG * U + coeffVG * V;
+-				int B1 = coeffY * Y1 + coeffUB * U;
++				int y_off0 = x_locations_[x++];
++				int y_off1 = x_locations_[x++];
++				int uv_off0 = y_off0 >> 1;
++				int uv_off1 = y_off0 >> 1;
++				int Y0 = Y_row[y_off0];
++				int Y1 = Y_row[y_off1];
++				int U0 = U_row[uv_off0];
++				int V0 = V_row[uv_off0];
++				int U1 = U_row[uv_off1];
++				int V1 = V_row[uv_off1];
++				U0 -= 128;
++				V0 -= 128;
++				U1 -= 128;
++				V1 -= 128;
++				int R0 = M[0] * Y0 + M[2] * V0;
++				int G0 = M[3] * Y0 + M[4] * U0 + M[5] * V0;
++				int B0 = M[6] * Y0 + M[7] * U0;
++				int R1 = M[0] * Y1 + M[2] * V1;
++				int G1 = M[3] * Y1 + M[4] * U1 + M[5] * V1;
++				int B1 = M[6] * Y1 + M[7] * U1;
+ 				*(dest++) = std::clamp(R0, 0, 255);
+ 				*(dest++) = std::clamp(G0, 0, 255);
+ 				*(dest++) = std::clamp(B0, 0, 255);
+@@ -214,10 +189,11 @@ private:
+ 	MyMainWindow *main_window_ = nullptr;
+ 	MyWidget *pane_ = nullptr;
+ 	std::thread thread_;
++	std::vector<uint16_t> x_locations_;
++	unsigned int last_image_width_ = 0;
+ 	unsigned int window_width_, window_height_;
+ 	std::mutex mutex_;
+ 	std::condition_variable cond_var_;
+-	std::vector<uint8_t> tmp_stripe_;
+ };
+ 
+ Preview *make_qt_preview(Options const *options)
+diff --git a/utils/timestamp.py b/utils/timestamp.py
+index 95674d1..586ef5b 100755
+--- a/utils/timestamp.py
++++ b/utils/timestamp.py
+@@ -4,7 +4,6 @@
+ # Copyright (C) 2021, Raspberry Pi Ltd.
+ #
+ import argparse
+-import subprocess
+ 
+ try:
+     from matplotlib import pyplot as plt
+@@ -13,23 +12,12 @@ except ImportError:
+     plot_available = False
+ 
+ 
+-def read_times_pts(file):
++def read_times(file):
+     with open(file) as f:
+-        if f.readline().strip() != '# timecode format v2':
+-            raise RuntimeError('PTS file format unknown')
++        f.readline()  # there's one header line we must skip
+         return [float(line) for line in f.readlines()]
+ 
+ 
+-def read_times_container(file):
+-    cmd = ['ffprobe', file, '-hide_banner', '-select_streams', 'v', '-show_entries', 'frame=pkt_pts_time', '-of', 'csv=p=0']
+-    r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+-    if r.returncode:
+-        raise RuntimeError(f'ffprobe failed to run with command:\n{" ".join(cmd)}')
+-
+-    ts_list = [float(ts) * 1000 for ts in r.stdout.split('\n')[1:-1]]
+-    return ts_list
+-
+-
+ def get_differences(items):
+     return [next_item - item for item, next_item in zip(items[:-1], items[1:])]
+ 
+@@ -56,26 +44,17 @@ def plot_pts(diffs, avg, title):
+ 
+ if __name__ == '__main__':
+     parser = argparse.ArgumentParser(description='libcamera-apps timestamp analysis tool')
+-    parser.add_argument('filename', help='PTS file generated from libcamera-vid (with a .txt or .pts extension)'
+-                                         ' or an avi/mkv/mp4 container file', type=str)
++    parser.add_argument('filename', help='PTS file generated from libcamera-vid', type=str)
+     parser.add_argument('--plot', help='Plot timestamp graph', action='store_true')
+     args = parser.parse_args()
+ 
+-    if args.filename.lower().endswith(('.txt', '.pts')):
+-        times = read_times_pts(args.filename)
+-    elif args.filename.lower().endswith(('.avi', '.mkv', '.mp4')):
+-        times = read_times_container(args.filename)
+-    else:
+-        raise RuntimeError('Unknown file format')
+-
++    times = read_times(args.filename)
+     diffs = get_differences(times)
+     avg = sum(diffs) / len(diffs)
+     min_val, min_idx = min((val, idx) for (idx, val) in enumerate(diffs))
+     max_val, max_idx = max((val, idx) for (idx, val) in enumerate(diffs))
+-    print(f'Total: {len(diffs) + 1} frames ({len(diffs)} samples)')
+-    print(f'Average: {avg:.3f} ms / {1e3/avg:.3f} fps')
+-    print(f'Minimum: {min_val:.3f} ms at frame {min_idx}')
+-    print(f'Maximum: {max_val:.3f} ms at frame {max_idx}')
++    print(f'Minimum: {min_val:.3f} ms at frame {min_idx}\nMaximum: {max_val:.3f} ms at frame {max_idx}\nAverage: {avg:.3f} ms')
++    print(f'Total: {len(diffs)} samples')
+     print('Outliers:', *[outliers(diffs, f, avg) for f in (1, .1, .01, .001)])
+ 
+     if args.plot:

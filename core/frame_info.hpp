@@ -15,8 +15,7 @@
 struct FrameInfo
 {
 	FrameInfo(libcamera::ControlList &ctrls)
-		: exposure_time(0.0), digital_gain(0.0), colour_gains({ { 0.0f, 0.0f } }), focus(0.0), aelock(false),
-		  lens_position(-1.0), af_state(0)
+		: exposure_time(0.0), digital_gain(0.0), colour_gains({ { 0.0f, 0.0f } }), focus(0.0), aelock(false)
 	{
 		auto exp = ctrls.get(libcamera::controls::ExposureTime);
 		if (exp)
@@ -43,14 +42,6 @@ struct FrameInfo
 		auto ae = ctrls.get(libcamera::controls::AeLocked);
 		if (ae)
 			aelock = *ae;
-
-		auto lp = ctrls.get(libcamera::controls::LensPosition);
-		if (lp)
-			lens_position = *lp;
-
-		auto afs = ctrls.get(libcamera::controls::AfState);
-		if (afs)
-			af_state = *afs;
 	}
 
 	std::string ToString(std::string &info_string) const
@@ -83,25 +74,6 @@ struct FrameInfo
 					value << focus;
 				else if (t == "%aelock")
 					value << aelock;
-				else if (t == "%lp")
-					value << lens_position;
-				else if (t == "%afstate")
-				{
-					switch (af_state)
-					{
-					case libcamera::controls::AfStateIdle:
-						value << "idle";
-						break;
-					case libcamera::controls::AfStateScanning:
-						value << "scanning";
-						break;
-					case libcamera::controls::AfStateFocused:
-						value << "focused";
-						break;
-					default:
-						value << "failed";
-					}
-				}
 
 				parsed.replace(pos, t.length(), value.str());
 			}
@@ -118,12 +90,9 @@ struct FrameInfo
 	float focus;
 	float fps;
 	bool aelock;
-	float lens_position;
-	int af_state;
 
 private:
 	// Info text tokens.
-	inline static const std::string tokens[] = { "%frame", "%fps", "%exp", "%ag", "%dg",
-						     "%rg", "%bg",  "%focus", "%aelock",
-						     "%lp", "%afstate" };
+	inline static const std::string tokens[] = { "%frame", "%fps", "%exp",	 "%ag",	   "%dg",
+												 "%rg",	   "%bg",  "%focus", "%aelock" };
 };

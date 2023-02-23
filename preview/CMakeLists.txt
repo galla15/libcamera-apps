@@ -63,13 +63,33 @@ else()
     message(STATUS "QT display mode will be unavailable!")
 endif()
 
+if (NOT DEFINED ENABLE_OPENCV)
+    message(STATUS " ENABLE_OPENCV not spedicfied - set to 1")
+    set(ENABLE_OPENCV 1)
+endif()
+set(OpenCV_FOUND 0)
+if (ENABLE_OPENCV)
+    find_package(OpenCV QUIET)
+endif()
+if (OpenCV_FOUND)
+    message(STATUS "    OPENCV_LINK_LIBRARIES=${OpenCV_LIBS}")
+    message(STATUS "    OPENCV_INCLUDE_DIRS=${OpenCV_INCLUDE_DIRS}")
+
+    include_directories({OpenCV_INCLUDE_DIRS})
+    set(TARGET_LIBS ${TARGET_LIBS} ${OpenCV_LIBS})
+
+    set(SRC ${SRC} opencv_preview.cpp)
+    message (STATUS "OpenCV display mode will be enabled")
+else ()
+    message(STATUS "OpenCV display mode will be unavailable!")
+endif()
+
 add_library(preview null_preview.cpp ${SRC})
-set_target_properties(preview PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
 target_link_libraries(preview ${TARGET_LIBS})
 
 target_compile_definitions(preview PUBLIC LIBDRM_PRESENT=${DRM_FOUND})
 target_compile_definitions(preview PUBLIC LIBEGL_PRESENT=${EGL_FOUND})
 target_compile_definitions(preview PUBLIC QT_PRESENT=${QT_FOUND})
+target_compile_definitions(preview PUBLIC OPENCV_PRESENT=${OpenCV_FOUND})
 
 install(TARGETS preview LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-

@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.6)
 
+set(CMAKE_CXX_STANDARD 17)
+
 project(libcamera-still)
-add_executable(libcamera-still libcamera_still.cpp)
-target_link_libraries(libcamera-still libcamera_app outputs images)
+add_executable(libcamera-still libcamera_still.cpp ../SignalServer/Semaphore.hpp ../SignalServer/SignalServer.cpp)
+target_link_libraries(libcamera-still libcamera_app images outputs)
 
 project(libcamera-vid)
-add_executable(libcamera-vid libcamera_vid.cpp)
+add_executable(libcamera-vid libcamera_vid.cpp ../SignalServer/Semaphore.hpp ../SignalServer/SignalServer.cpp)
 target_link_libraries(libcamera-vid libcamera_app encoders outputs)
 
 project(libcamera-hello)

@@ -12,13 +12,13 @@
 
 #include <chrono>
 
-#include "core/frame_info.hpp"
 #include "core/libcamera_app.hpp"
 #include "core/still_options.hpp"
 
 #include "output/output.hpp"
 
 #include "image/image.hpp"
+#include "../SignalServer/SignalServer.hpp"
 
 using namespace std::chrono_literals;
 using namespace std::placeholders;
@@ -81,9 +81,9 @@ static void save_image(LibcameraStillApp &app, CompletedRequestPtr &payload, Str
 	StreamInfo info = app.GetStreamInfo(stream);
 	const std::vector<libcamera::Span<uint8_t>> mem = app.Mmap(payload->buffers[stream]);
 	if (stream == app.RawStream())
-		dng_save(mem, info, payload->metadata, filename, app.CameraModel(), options);
+		dng_save(mem, info, payload->metadata, filename, app.CameraId(), options);
 	else if (options->encoding == "jpg")
-		jpeg_save(mem, info, payload->metadata, filename, app.CameraModel(), options);
+		jpeg_save(mem, info, payload->metadata, filename, app.CameraId(), options);
 	else if (options->encoding == "png")
 		png_save(mem, info, filename, options);
 	else if (options->encoding == "bmp")
@@ -161,10 +161,17 @@ static int get_key_or_signal(StillOptions const *options, pollfd p[1])
 
 static void event_loop(LibcameraStillApp &app)
 {
+	SignalServer signal_server(8080);
+	std::string param;
+	signal_server.start();
+
 	StillOptions const *options = app.GetOptions();
 	bool output = !options->output.empty() || options->datetime || options->timestamp; // output requested?
 	bool keypress = options->keypress || options->signal; // "signal" mode is much like "keypress" mode
 	unsigned int still_flags = LibcameraApp::FLAG_STILL_NONE;
+	float scale = 0.0;
+	float offset_x = 0.0;
+	float offset_y = 0.0;
 	if (options->encoding == "rgb" || options->encoding == "png")
 		still_flags |= LibcameraApp::FLAG_STILL_BGR;
 	else if (options->encoding == "bmp")
@@ -199,17 +206,11 @@ static void event_loop(LibcameraStillApp &app)
 	auto timelapse_time = start_time;
 	int timelapse_frames = 0;
 	constexpr int TIMELAPSE_MIN_FRAMES = 6; // at least this many preview frames between captures
-	bool keypressed = false;
-	enum
-	{
-		AF_WAIT_NONE,
-		AF_WAIT_SCANNING,
-		AF_WAIT_FINISHED
-	} af_wait_state = AF_WAIT_NONE;
-	int af_wait_timeout = 0;
 
-	for (unsigned int count = 0;; count++)
+	for (unsigned int count = 0; ; count++)
 	{
+		param = signal_server.read();
+
 		LibcameraApp::Msg msg = app.Wait();
 		if (msg.type == LibcameraApp::MsgType::Timeout)
 		{
@@ -223,77 +224,198 @@ static void event_loop(LibcameraStillApp &app)
 		else if (msg.type != LibcameraApp::MsgType::RequestComplete)
 			throw std::runtime_error("unrecognised message!");
 
-		CompletedRequestPtr &completed_request = std::get<CompletedRequestPtr>(msg.payload);
 		auto now = std::chrono::high_resolution_clock::now();
 		int key = get_key_or_signal(options, p);
-		if (key == 'x' || key == 'X')
-			return;
-		if (key == '\n')
-			keypressed = true;
+		if (!key)
+			key = param[0];
 
-		// In viewfinder mode, run until the timeout or keypress. When that happens,
-		// if the "--autofocus-on-capture" option was set, trigger an AF scan and wait
-		// for it to complete. Then switch to capture mode if an output was requested.
+		switch (key)
+		{
+		case 'x':
+		case 'X':
+			return;
+		case 'f':
+		case 'F':
+		{
+			libcamera::ControlList controls;
+			controls.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerStart);
+			app.SetControls(controls);
+			break;
+		}
+		case 'w':
+		case 'W':
+		{
+			scale += 0.05;
+			break;
+		}
+		case 's':
+		case 'S':
+		{
+			scale -= 0.05;
+			break;
+		}
+		case 'l':
+		case 'L':
+		{
+			offset_x += 0.05;
+			break;
+		}
+		case 'j':
+		case 'J':
+		{
+			offset_x -= 0.05;
+			break;
+		}
+		case 'i':
+		case 'I':
+		{
+			offset_y -= 0.05;
+			break;
+		}
+		case 'k':
+		case 'K':
+		{
+			offset_y += 0.05;
+			break;
+		}
+		case 'm':
+		case 'M':
+		{
+			scale = 0.95;
+			break;
+		}
+		case 'r':
+		case 'R':
+		{
+			scale = 0.0;
+			break;
+		}
+		default:
+			(void)0;
+		}
+
+		if (scale > 0.95)
+			scale = 0.95;
+		else if (scale < 0.0)
+			scale = 0.0;
+
+		if (offset_x > scale / 2)
+			offset_x = scale / 2;
+		else if (offset_x < -(scale / 2))
+			offset_x = -(scale / 2);
+
+		if (offset_y > scale / 2)
+			offset_y = scale / 2;
+		else if (offset_y < -(scale / 2))
+			offset_y = -(scale / 2);
+
+		if (isalpha(key))
+		{
+			std::cout << "scale: " << scale << ", offset_x: " << offset_x << std::endl;
+
+			app.SetScalerCrop(scale / 2 + offset_x, scale / 2 + offset_y, 1 - scale, 1 - scale);
+		}
+
+		if (key == 'w' || key == 'W') {
+			scale += 0.05;
+		}
+
+		if (key == 's' || key == 'S') {
+			scale -= 0.05;
+		}
+
+		if (key == 'l' || key == 'L') {
+			offset_x += 0.05;
+		}
+
+		if (key == 'j' || key == 'J') {
+			offset_x -= 0.05;
+		}
+
+
+		if (key == 'i' || key == 'I') {
+			offset_y -= 0.05;
+		}
+
+		if (key == 'k' || key == 'K') {
+			offset_y += 0.05;
+		}
+
+		if (key == 'm' || key == 'M') {
+			scale = 0.95;
+		}
+
+		if (key == 'r' || key == 'R') {
+			scale = 0.0;
+		}
+
+
+		if (scale > 0.95) {
+			scale = 0.95;
+		}
+
+		if (scale < 0.0) {
+			scale = 0.0;
+		}
+
+		if (offset_x > scale / 2)
+			offset_x = scale / 2;
+
+		if (offset_x < -(scale / 2))
+			offset_x = -(scale / 2);
+
+		if (offset_y > scale / 2)
+			offset_y = scale / 2;
+
+		if (offset_y < -(scale / 2))
+			offset_y = -(scale / 2);
+
+		if (isalpha(key)) {
+			std::cout << "scale: " << scale << ", offset_x: " << offset_x << std::endl;
+
+			app.SetScalerCrop(scale / 2 + offset_x, scale / 2 + offset_y, 1 - scale, 1 - scale);
+		}
+
+		if (key == 'f' || key == 'F') {
+			libcamera::ControlList controls;
+			controls.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerStart);
+			app.SetControls(controls);
+		}
+
+		// In viewfinder mode, simply run until the timeout. When that happens, switch to
+		// capture mode if an output was requested.
 		if (app.ViewfinderStream())
 		{
 			LOG(2, "Viewfinder frame " << count);
 			timelapse_frames++;
 
 			bool timed_out = options->timeout && now - start_time > std::chrono::milliseconds(options->timeout);
+			bool keypressed = key == '\n';
 			bool timelapse_timed_out = options->timelapse &&
 									   now - timelapse_time > std::chrono::milliseconds(options->timelapse) &&
 									   timelapse_frames >= TIMELAPSE_MIN_FRAMES;
-			bool want_capture = false;
 
-			if (af_wait_state != AF_WAIT_NONE)
+			if (timed_out || keypressed || timelapse_timed_out)
 			{
-				FrameInfo fi(completed_request->metadata);
-				bool scanning = fi.af_state == libcamera::controls::AfStateScanning;
-				if (scanning || (af_wait_state == AF_WAIT_SCANNING && ++af_wait_timeout >= 16))
-					af_wait_state = AF_WAIT_FINISHED;
-				else if (af_wait_state == AF_WAIT_FINISHED)
-					want_capture = true;
-			}
-			else if (timed_out || keypressed || timelapse_timed_out)
-			{
-				// Trigger a still capture, unless we timed out in timelapse or keypress mode
-				if ((timed_out && options->timelapse) || (!keypressed && keypress))
+				// Trigger a still capture unless:
+				if (!output || // we have no output file
+					(timed_out && options->timelapse) || // timed out in timelapse mode
+					(!keypressed && keypress)) // no key was pressed (in keypress mode)
 					return;
-
-				keypressed = false;
-				if (options->af_on_capture)
-				{
-					libcamera::ControlList cl;
-					cl.set(libcamera::controls::AfMode, libcamera::controls::AfModeAuto);
-					cl.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerStart);
-					app.SetControls(cl);
-					af_wait_state = AF_WAIT_SCANNING;
-					af_wait_timeout = 0;
-				}
 				else
-					want_capture = true;
-			}
-			if (want_capture)
-			{
-				if (!output)
-					return;
-				keypressed = false;
-				af_wait_state = AF_WAIT_NONE;
-				timelapse_time = std::chrono::high_resolution_clock::now();
-				app.StopCamera();
-				app.Teardown();
-				app.ConfigureStill(still_flags);
-				if (options->af_on_capture)
 				{
-					libcamera::ControlList cl;
-					cl.set(libcamera::controls::AfMode, libcamera::controls::AfModeAuto);
-					cl.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerCancel);
-					app.SetControls(cl);
+					timelapse_time = std::chrono::high_resolution_clock::now();
+					app.StopCamera();
+					app.Teardown();
+					app.ConfigureStill(still_flags);
+					app.StartCamera();
 				}
-				app.StartCamera();
 			}
 			else
+			{
+				CompletedRequestPtr &completed_request = std::get<CompletedRequestPtr>(msg.payload);
 				app.ShowPreview(completed_request, app.ViewfinderStream());
+			}
 		}
 		// In still capture mode, save a jpeg. Go back to viewfinder if in timelapse mode,
 		// otherwise quit.
@@ -301,23 +423,15 @@ static void event_loop(LibcameraStillApp &app)
 		{
 			app.StopCamera();
 			LOG(1, "Still capture image received");
-			save_images(app, completed_request);
+			save_images(app, std::get<CompletedRequestPtr>(msg.payload));
 			if (!options->metadata.empty())
-				save_metadata(options, completed_request->metadata);
+				save_metadata(options, std::get<CompletedRequestPtr>(msg.payload)->metadata);
 			timelapse_frames = 0;
 			if (!options->immediate && (options->timelapse || options->signal || options->keypress))
 			{
 				app.Teardown();
 				app.ConfigureViewfinder();
-				if (options->af_on_capture && options->afMode_index == -1)
-				{
-					libcamera::ControlList cl;
-					cl.set(libcamera::controls::AfMode, libcamera::controls::AfModeAuto);
-					cl.set(libcamera::controls::AfTrigger, libcamera::controls::AfTriggerCancel);
-					app.SetControls(cl);
-				}
 				app.StartCamera();
-				af_wait_state = AF_WAIT_NONE;
 			}
 			else
 				return;

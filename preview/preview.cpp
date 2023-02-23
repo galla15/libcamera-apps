@@ -13,6 +13,7 @@ Preview *make_null_preview(Options const *options);
 Preview *make_egl_preview(Options const *options);
 Preview *make_drm_preview(Options const *options);
 Preview *make_qt_preview(Options const *options);
+Preview *make_opencv_preview(Options const *options);
 
 Preview *make_preview(Options const *options)
 {
@@ -24,6 +25,15 @@ Preview *make_preview(Options const *options)
 		Preview *p = make_qt_preview(options);
 		if (p)
 			LOG(1, "Made QT preview window");
+		return p;
+	}
+#endif
+#if OPENCV_PRESENT
+	else if (options->opencv_preview)
+	{
+		Preview *p = make_opencv_preview(options);
+		if (p)
+			LOG(1, "Made OpenCV preview window");
 		return p;
 	}
 #endif

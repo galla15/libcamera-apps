@@ -68,14 +68,9 @@ struct VideoOptions : public Options
 			("audio-codec", value<std::string>(&audio_codec)->default_value("aac"),
 			 "Sets the libav audio codec to use.\n"
 			 "To list available codecs, run  the \"ffmpeg -codecs\" command.")
-			("audio-source", value<std::string>(&audio_source)->default_value("pulse"),
-			 "Audio source to record from. Valid options are \"pulse\" and \"alsa\"")
 			("audio-device", value<std::string>(&audio_device)->default_value("default"),
-			 "Audio device to record from.  To list the available devices,\n"
-			 "for pulseaudio, use the following command:\n"
-			 "\"pactl list | grep -A2 'Source #' | grep 'Name: '\"\n"
-			 "or for alsa, use the following command:\n"
-			 "\"arecord -L\"")
+			 "Audio device to record from. To list the available devices, use the following command:\n"
+			 "pactl list | grep -A2 'Source #' | grep 'Name: '")
 			("audio-bitrate", value<uint32_t>(&audio_bitrate)->default_value(32768),
 			 "Set the audio bitrate for encoding, in bits/second.")
 			("audio-samplerate", value<uint32_t>(&audio_samplerate)->default_value(0),
@@ -98,7 +93,6 @@ struct VideoOptions : public Options
 	bool libav_audio;
 	std::string audio_codec;
 	std::string audio_device;
-	std::string audio_source;
 	uint32_t audio_bitrate;
 	uint32_t audio_samplerate;
 	int32_t av_sync;
@@ -143,14 +137,6 @@ struct VideoOptions : public Options
 			LOG_ERROR("WARNING: consider inline headers with 'pause'/split/segment/circular");
 		if ((split || segment) && output.find('%') == std::string::npos)
 			LOG_ERROR("WARNING: expected % directive in output filename");
-
-		// From https://en.wikipedia.org/wiki/Advanced_Video_Coding#Levels
-		double mbps = ((width + 15) >> 4) * ((height + 15) >> 4) * framerate.value_or(DEFAULT_FRAMERATE);
-		if ((codec == "h264" || codec == "libav") && mbps > 245760.0)
-		{
-			LOG(1, "Overriding H.264 level 4.2");
-			level = "4.2";
-		}
 
 		return true;
 	}
